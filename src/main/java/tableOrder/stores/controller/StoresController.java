@@ -1,5 +1,6 @@
 package tableOrder.stores.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import tableOrder.stores.service.StoresService;
 
 import java.util.List;
 
+@Tag(name = "매장 API", description = "매장 관련 API")
 @Slf4j
 @RestController
 @RequestMapping("/api")
@@ -16,8 +18,6 @@ import java.util.List;
 public class StoresController {
 
     private final StoresService storesService;
-
-
 
     @PostMapping("/insertStores")
     public ResponseEntity<String> insertStores(@RequestBody RequestStoresDto.RequestInsertDto requestInsertDto){

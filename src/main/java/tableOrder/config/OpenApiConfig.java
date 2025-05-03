@@ -19,7 +19,11 @@ public class OpenApiConfig {
                 .packagesToScan(
                         "tableOrder.users.controller",
                         "tableOrder.stores.controller",
-                        "tableOrder.menu.controller"
+                        "tableOrder.menu.controller",
+                        "tableOrder.orders.controller",
+                        "tableOrder.category.controller",
+                        "tableOrder.sales.controller",
+                        "tableOrder.ordersStatus.controller"
                 )
                 .build();
     }
@@ -27,7 +31,7 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI openAPI() {
         Info info = new Info()
-                .title("Gaeng's Order 다이어리")
+                .title("Gaeng's Order")
                 .version("v0.0.1")
                 .description("Gaeng's Order API 명세서입니다.");
         return new OpenAPI()
