@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="tableOrder.stores.mapper.StoresMapper">
+    <select id="confirmStores" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM STORES
+        WHERE business_no = #{businessNo}
+    </select>
+
+    <insert id="insertStores" parameterType="tableOrder.stores.dto.RequestDto.RequestStoresDto$RequestInsertDto">
+        insert into stores (business_no, store_name, store_tel)
+               values (#{businessNo}, #{storeName}, #{storeTel})
+    </insert>
+
+    <update id="softDeleteStores" parameterType="tableOrder.stores.dto.RequestDto.RequestStoresDto$RequestStoreDto">
+        UPDATE stores SET soft_delete = 'Y'
+        WHERE business_no = #{businessNo}
+    </update>
+</mapper>
