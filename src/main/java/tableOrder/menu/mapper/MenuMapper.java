@@ -1,11 +1,15 @@
 package tableOrder.menu.mapper;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface MenuMapper {
+
+//    @Insert("INSERT INTO MENU VALUES ")
+//    Integer insertMenu()
 
     @Select("select count(*) from menu where categories_no = #{value}")
     int cntByMenu(Long categoriesNo);
