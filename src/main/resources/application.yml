@@ -1,0 +1,62 @@
+server:
+  port: 80
+
+spring:
+  jwt:
+    secret: "vmfhXkA123KDGNVVNEDKF12X0ZLLLA214Kalroqkfwkdbala1W2Q6S0n35kazKK12_Avzkvnldfenvlnv3"
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/tableorder?serverTimezone=Asia/Seoul
+    username: gaeng
+    password: 1234
+  jpa:
+    hibernate:
+      # ddl-auto 옵션 설명:
+      # none       : 자동으로 DDL(테이블 생성/수정) 작업을 하지 않음 (운영 환경 추천)
+      # update     : 엔티티와 DB 테이블을 비교하여 필요한 변경만 적용 (기존 데이터는 삭제되지 않음)
+      # create     : 애플리케이션 실행 시 기존 테이블 삭제 후 새로 생성 (데이터 모두 삭제됨, 개발/테스트용)
+      # create-drop: 실행 시 테이블 생성, 애플리케이션 종료 시 테이블 삭제 (테스트용)
+      ddl-auto: update
+      # CamelCaseToUnderscoresNamingStrategy를 적용하면,
+      # 엔티티의 camelCase 필드명이 DB의 snake_case 컬럼명으로 자동 변환됩니다.
+      # 예) userId → user_id, phoneNumber → phone_number
+      # 따라서 엔티티와 DB 컬럼 네이밍 컨벤션이 달라도 별도 @Column(name=...) 지정 없이 매핑이 가능합니다.
+      physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    # SQL 쿼리를 콘솔에 출력 (개발 중에만 true 권장)
+    show-sql: true
+    properties:
+      hibernate:
+        # 출력되는 SQL을 보기 좋게 정렬
+        format_sql: true
+
+
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:mapper/**/*.xml
+
+springdoc:
+  # packages-to-scan: tableOrder.users.controller
+  #   → OpenAPI 문서에 포함할 컨트롤러 패키지 지정 (주석 해제하면 해당 패키지의 컨트롤러만 문서화)
+  default-consumes-media-type: application/json;charset=UTF-8
+  #   → API가 기본적으로 받을 요청의 미디어 타입(콘텐츠 타입) 지정
+
+  default-produces-media-type: application/json;charset=UTF-8
+  #   → API가 기본적으로 응답할 미디어 타입(콘텐츠 타입) 지정
+
+  cache:
+    disabled: true              # OpenAPI 문서 캐시 비활성화 (변경사항이 바로 반영됨)
+
+  api-docs:
+    path: /api-docs/json        # OpenAPI JSON 문서의 엔드포인트 경로 지정 (기본: /v3/api-docs)
+    groups:
+      enabled: true             # API 그룹 기능 활성화 (여러 그룹으로 문서 분리 가능)
+
+  swagger-ui:
+    enabled: true               # Swagger UI 활성화 (API 문서 웹페이지 사용)
+    path: /demo-ui.html         # Swagger UI 접근 경로 지정 (기본: /swagger-ui.html)
+    tags-sorter: alpha          # 태그(카테고리) 알파벳 순 정렬
+    operations-sorter: alpha    # API 엔드포인트(메서드) 알파벳 순 정렬
+
+  paths-to-match: /**
+  #   → 문서화할 API 경로 패턴 지정 (모든 경로 포함)
+

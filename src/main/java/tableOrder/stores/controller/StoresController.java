@@ -29,7 +29,7 @@ public class StoresController {
      * - 비즈니스 로직 예외 발생 시 400 Bad Request와 예외 메시지 반환
      *
      */
-    @PostMapping("/stores")
+    @PostMapping("/superAdmin/stores")
     public ResponseEntity<String> insertStores(@RequestBody @Validated RequestStoresDto.RequestInsertDto requestInsertDto){
         log.info("{}  {} 테스트", requestInsertDto.getBusinessNo(), requestInsertDto.getStoreTel());
 
