@@ -28,4 +28,13 @@ public class RequestUsersDto {
         @NotNull
         private Role role;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class requestLoginDto{
+        private String userId;
+        private String pwd;
+    }
 }

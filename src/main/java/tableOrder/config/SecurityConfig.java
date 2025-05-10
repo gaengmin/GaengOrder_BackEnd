@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import tableOrder.security.jwt.JWTFilter;
 import tableOrder.security.jwt.JWTUtil;
 import tableOrder.security.jwt.LoginFilter;
 
@@ -66,6 +67,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/superAdmin/login").permitAll() // 로그인 허용
                 .anyRequest().hasAuthority("SUPERADMIN"));
+        http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
         http.addFilterAt(superAdminLoginFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -87,6 +89,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/login").permitAll()
                 .anyRequest().hasAuthority("ADMIN")
         );
+        http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
         http.addFilterAt(adMinLoginFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
