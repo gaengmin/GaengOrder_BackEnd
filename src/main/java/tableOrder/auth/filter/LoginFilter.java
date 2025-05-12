@@ -27,6 +27,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Iterator;
 
+import static tableOrder.common.utils.CookieUtil.createCookie;
+
 @RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -114,39 +116,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setStatus(HttpStatus.OK.value());
     }
 
-
-
-    /**
-     * @Date 2025.05.11
-     * 쿠키 생성 메소드
-     * <p>
-     * [설명]
-     * 전달받은 key와 value로 HttpOnly 쿠키를 생성하여 반환합니다.
-     * - 쿠키의 유효기간은 24시간(86400초)으로 설정됩니다.
-     * - HttpOnly 옵션을 활성화하여 클라이언트의 JavaScript에서 쿠키에 접근하지 못하도록 보안성을 높입니다.
-     * - (주석처리) Secure 옵션을 활성화하면 HTTPS 환경에서만 쿠키가 전송됩니다.(HTTPS(443) 환경 → Secure 옵션 반드시 켜기 (cookie.setSecure(true)))
-     * - (주석처리) Path를 "/"로 설정하면 모든 경로에서 쿠키가 유효합니다.
-     */
-    private Cookie createCookie(String key, String value) {
-
-        // key와 value로 새로운 쿠키 객체 생성
-        Cookie cookie = new Cookie(key, value);
-
-        // 쿠키의 유효기간을 24시간(초 단위)로 설정
-        cookie.setMaxAge(24 * 60 * 60);
-
-        // (선택) HTTPS 환경에서만 쿠키 전송
-        // cookie.setSecure(true);
-
-        // (선택) 모든 경로에서 쿠키 사용 가능
-        cookie.setPath("/");
-
-        // HttpOnly 옵션 설정 (JavaScript에서 접근 불가, XSS 공격 방지)
-        cookie.setHttpOnly(true);
-
-        // 생성된 쿠키 반환
-        return cookie;
-    }
 
     /**
      * addRefreshEntity

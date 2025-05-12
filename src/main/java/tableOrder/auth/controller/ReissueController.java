@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import tableOrder.auth.dto.response.ResponseTokenDto;
 import tableOrder.auth.service.ReissueService;
 
+import static tableOrder.common.utils.CookieUtil.createCookie;
+import static tableOrder.common.utils.CookieUtil.extractRefreshToken;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
@@ -31,7 +34,7 @@ public class ReissueController {
             HttpServletResponse response
     ) {
         // 1. 쿠키에서 refresh 토큰 추출
-        String refreshToken = extractRefreshToken(request.getCookies());
+        String refreshToken = extractRefreshToken(request.getCookies(), "refresh");
 
         try {
             // 2. 서비스 호출 (비즈니스 로직 위임)
@@ -49,23 +52,4 @@ public class ReissueController {
         }
     }
 
-    // 쿠키에서 refresh 토큰 추출 메소드
-    private String extractRefreshToken(Cookie[] cookies) {
-        if (cookies == null) return null;
-        for (Cookie cookie : cookies) {
-            if ("refresh".equals(cookie.getName())) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
-
-    // 쿠키 생성 메소드 (컨트롤러 책임)
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24 * 60 * 60);
-        cookie.setPath("/"); // 모든 경로에서 쿠키 유효
-        cookie.setHttpOnly(true);
-        return cookie;
-    }
 }
