@@ -12,9 +12,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import tableOrder.security.jwt.JWTFilter;
-import tableOrder.security.jwt.JWTUtil;
-import tableOrder.security.jwt.LoginFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import tableOrder.auth.filter.CustomLogoutFilter;
+import tableOrder.refresh.repository.RefreshTokenRepository;
+import tableOrder.auth.filter.JWTFilter;
+import tableOrder.auth.util.JWTUtil;
+import tableOrder.auth.filter.LoginFilter;
+import tableOrder.users.repository.UserRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -22,9 +26,10 @@ import tableOrder.security.jwt.LoginFilter;
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
-
     //JWT UTIL 주입
     private final JWTUtil jwtUtil;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
 
     /**
      * AuthenticationManager Bean 등록
@@ -44,69 +49,35 @@ public class SecurityConfig {
     }
 
     /**
-     * SUPERADMIN 전용 보안 필터 체인
-     * - /api/superAdmin/** 경로에만 적용
-     * - 로그인 경로: /api/superAdmin/login (permitAll)
-     * - 나머지 경로: SUPERADMIN 권한 필요
-     * - JWT 기반 REST API에 맞는 공통 보안 정책 적용
+     *
      */
-    // SUPERADMIN 전용 필터 체인
+    // 필터 체인
     @Bean
-    @Order(1)
-    public SecurityFilterChain superAdminFilterChain(HttpSecurity http) throws Exception {
-        LoginFilter superAdminLoginFilter = new LoginFilter(authenticationManager(), jwtUtil); // Bean 주입
-        superAdminLoginFilter.setFilterProcessesUrl("/api/superAdmin/login"); // 원하는 로그인 경로 지정
-        http.securityMatcher("/api/superAdmin/**"); // 경로 지정 필수
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        LoginFilter loginFilter = new LoginFilter(authenticationManager(), jwtUtil, userRepository, refreshTokenRepository); // Bean 주입
+        loginFilter.setFilterProcessesUrl("/api/login"); // 원하는 로그인 경로 지정
+        http.securityMatcher("/api/**");
 
         // ======= 공통 보안 정책 적용 =======
         http.csrf(csrf -> csrf.disable());
         http.formLogin(form -> form.disable());
         http.httpBasic(basic -> basic.disable());
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         // ======= 공통 보안 정책 적용 =======
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/superAdmin/login").permitAll() // 로그인 허용
-                .anyRequest().hasAuthority("SUPERADMIN"));
+                .requestMatchers("/api/login").permitAll() // 로그인 허용
+                .requestMatchers("/api/auth/reissue").permitAll()
+                .requestMatchers("/api/logout").authenticated()
+                .requestMatchers("/api/superAdmin/**").hasAuthority("SUPERADMIN")
+                .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+                .requestMatchers("/api/orders/**").hasAnyAuthority("ORDERS", "ADMIN")
+                .anyRequest().authenticated());
         http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
-        http.addFilterAt(superAdminLoginFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository), LogoutFilter.class);
+        http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
-    // ADMIN 전용 필터 체인
-    @Bean
-    @Order(2)
-    public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
-        LoginFilter adMinLoginFilter = new LoginFilter(authenticationManager(), jwtUtil);
-        adMinLoginFilter.setFilterProcessesUrl("/api/admin/login"); // 원하는 로그인 경로 지정
-        http.securityMatcher("/api/admin/**"); // 경로 지정 필수
-        // ======= 공통 보안 정책 적용 =======
-        http.csrf(csrf -> csrf.disable());
-        http.formLogin(form -> form.disable());
-        http.httpBasic(basic -> basic.disable());
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        // ==================================
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/admin/login").permitAll()
-                .anyRequest().hasAuthority("ADMIN")
-        );
-        http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
-        http.addFilterAt(adMinLoginFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
-    }
-
-    // 공용 필터 체인 (예: ORDERS)
-    @Bean
-    @Order(3)
-    public SecurityFilterChain defaultFilterChain(HttpSecurity http) throws Exception {
-        // ======= 공통 보안 정책 적용 =======
-        http.csrf(csrf -> csrf.disable());
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        // ==================================
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/orders/**").hasAnyAuthority("ADMIN", "ORDERS")
-                .anyRequest().permitAll()
-        );
-        return http.build();
-    }
 
 }

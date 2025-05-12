@@ -1,4 +1,4 @@
-package tableOrder.security.jwt;
+package tableOrder.auth.util;
 
 
 import io.jsonwebtoken.Jwts;
@@ -38,6 +38,11 @@ public class JWTUtil {
     /**
      * 검증을 할 메소드
      */
+    public String getCategory(String token) {
+
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
+    }
+
     public String getUserId(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", String.class);
     }
@@ -50,12 +55,18 @@ public class JWTUtil {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
+
+
+
     /**
      * 생성을 할 메소드
+     * 
+     * 25.05.11 -> 카테고리 추가(액세스 토큰인지, 리프레시 토큰인지) 판단하는
      */
-    public String createJwt(String userId, String role, Long expiredMs) {
+    public String createJwt(String category, String userId, String role, Long expiredMs) {
 
         return Jwts.builder()
+                .claim("category", category)
                 .claim("userId", userId)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis())) //현재 토큰 발행시간
