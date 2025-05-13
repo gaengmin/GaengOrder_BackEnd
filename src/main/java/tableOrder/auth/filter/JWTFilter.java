@@ -73,11 +73,13 @@ public class JWTFilter extends OncePerRequestFilter {
         // 5. 토큰에서 userId, role 추출
         String userId = jwtUtil.getUserId(accessToken);
         Role role = Role.valueOf(jwtUtil.getRole(accessToken));
+        Long storeNo = Long.valueOf(jwtUtil.getStoredNo(accessToken));
 
         // 6. 사용자 정보로 UserDetails 및 Authentication 객체 생성
         Users users = Users.builder()
                 .userId(userId)
                 .role(role)
+                .storeNo(storeNo)
                 .build();
         CustomUserDetails customUserDetails = new CustomUserDetails(users);
 

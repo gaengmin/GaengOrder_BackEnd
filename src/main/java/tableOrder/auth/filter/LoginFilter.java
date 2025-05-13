@@ -18,6 +18,7 @@ import tableOrder.auth.util.JWTUtil;
 import tableOrder.refresh.entity.RefreshTokenEntity;
 import tableOrder.refresh.repository.RefreshTokenRepository;
 import tableOrder.users.dto.request.RequestUsersDto;
+import tableOrder.users.dto.security.CustomUserDetails;
 import tableOrder.users.entity.Users;
 import tableOrder.users.repository.UserRepository;
 
@@ -95,17 +96,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         // 1. 인증된 사용자의 ID 추출
-        String userId = authResult.getName();
 
-        // 2. 인증된 사용자의 권한(ROLE) 추출
-        Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority();
+        // 1. CustomUserDetails에서 사용자 정보 추출
+        CustomUserDetails userDetails = (CustomUserDetails) authResult.getPrincipal();
+        String userId = userDetails.getUsername();
+        String role = userDetails.getAuthorities().iterator().next().getAuthority();
+        Long storeNo = userDetails.getStoreNo(); // storeNo 추출
 
         // 3. JWT 토큰 생성 (Access: 10분, Refresh: 24시간)
-        String access = jwtUtil.createJwt("access", userId, role, 600000L); // 10분(600,000ms)
-        String refresh = jwtUtil.createJwt("refresh", userId, role, 86400000L); // 24시간(86,400,000ms)
+        String access = jwtUtil.createJwt("access", userId, role, storeNo,600000L); // 10분(600,000ms)
+        String refresh = jwtUtil.createJwt("refresh", userId, role, storeNo,86400000L); // 24시간(86,400,000ms)
 
         //4. 리프래쉬 토큰 저장
         addRefreshEntity(userId, refresh, 8640000L);

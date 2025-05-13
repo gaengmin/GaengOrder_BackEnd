@@ -30,6 +30,9 @@ public class CustomUserDetails implements UserDetails {
         return users.getUserId();
     }
 
+    public Long getStoreNo() {
+        return users.getStoreNo();
+    }
 
     @Override
     public boolean isAccountNonExpired() {

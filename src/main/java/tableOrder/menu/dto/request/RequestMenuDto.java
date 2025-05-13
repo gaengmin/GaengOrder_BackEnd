@@ -29,7 +29,7 @@ public class RequestMenuDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public class UpdateMenuDto {
+    public static class UpdateMenuDto {
         private Long categoriesNo;    // null이면 변경 없음
         private String menuName;      // null이면 변경 없음
         private Integer menuPrice;    // null이면 변경 없음

@@ -51,6 +51,10 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 
+    public String getStoredNo(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("storeNo", String.class);
+    }
+
     public Boolean isExpired(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
@@ -63,12 +67,13 @@ public class JWTUtil {
      * 
      * 25.05.11 -> 카테고리 추가(액세스 토큰인지, 리프레시 토큰인지) 판단하는
      */
-    public String createJwt(String category, String userId, String role, Long expiredMs) {
+    public String createJwt(String category, String userId, String role, Long storeNo, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("category", category)
                 .claim("userId", userId)
                 .claim("role", role)
+                .claim("storeNo", storeNo)
                 .issuedAt(new Date(System.currentTimeMillis())) //현재 토큰 발행시간
                 .expiration(new Date(System.currentTimeMillis() + expiredMs)) //토근 소멸 시간
                 .signWith(secretKey)
