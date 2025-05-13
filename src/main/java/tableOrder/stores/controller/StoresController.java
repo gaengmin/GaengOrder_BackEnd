@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import tableOrder.stores.dto.RequestDto.RequestStoresDto;
@@ -29,17 +30,13 @@ public class StoresController {
      * - 비즈니스 로직 예외 발생 시 400 Bad Request와 예외 메시지 반환
      *
      */
-    @PostMapping("/superAdmin/stores")
-    public ResponseEntity<String> insertStores(@RequestBody @Validated RequestStoresDto.RequestInsertDto requestInsertDto){
-        log.info("{}  {} 테스트", requestInsertDto.getBusinessNo(), requestInsertDto.getStoreTel());
 
-        try{
+    @PreAuthorize("SUPERADMIN")
+    @PostMapping("/stores")
+    public ResponseEntity<String> insertStores(@RequestBody @Validated RequestStoresDto.RequestInsertDto requestInsertDto){
             log.info("매장을 등록합니다.");
             storesService.insertStores(requestInsertDto);
             return ResponseEntity.status(200).body("매장 등록 완료");
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
     }
 
 

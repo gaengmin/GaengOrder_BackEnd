@@ -25,8 +25,6 @@ public class RequestCategoryDto {
     @AllArgsConstructor
     @Builder
     public static class UpdateCategory {
-        @NotEmpty(message = "카테고리 NO는 필수")
-        private Long categoriesNo;
         @NotBlank(message = "카테고리 이름은 필수")
         private String name;
     }
@@ -37,8 +35,6 @@ public class RequestCategoryDto {
     @AllArgsConstructor
     @Builder
     public static class SoftDeleteCategory {
-        @NotEmpty(message = "카테고리 NO는 필수")
-        private Long categoryNo;
         @NotBlank(message = "softDelete 데이터")
         private SoftDelete softDelete;
     }

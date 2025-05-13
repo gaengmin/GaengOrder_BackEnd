@@ -17,16 +17,10 @@ public class UserController {
 
     private final UserService userService;
 
-
-    @GetMapping("/admin")
-    public String adminTest() {
-
-        return "admin";
-    }
     /**
      * 시스템 관리자가 매장관리자 회원가입해주기
      * */
-    @PostMapping("/superAdmin/users")
+    @PostMapping("/users")
     public ResponseEntity<?> joinUsers(@RequestBody @Valid RequestUsersDto.requestAdminJoinDto adminJoinDto) {
 
         log.info(adminJoinDto.getUserId());

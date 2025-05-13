@@ -18,8 +18,8 @@ public interface CategoriesMapper {
     void softDeleteCategoriesByNo(Long id);
 
     //카테고리 명 변경
-    @Update("UPDATE CATEGORIES SET name = #{name} Where categories_no = #{categoriesNo}")
-    Integer changeCategoriesName(RequestCategoryDto.UpdateCategory updateCategory);
+    @Update("UPDATE CATEGORIES SET name = #{name} WHERE categories_no = #{categoriesNo}")
+    Integer changeCategoriesName(@Param("categoriesNo") Long categoriesNo, @Param("name") String name);
 
     // 카테고리 존재 여부 확인 (1:존재, 0:없음)
     @Select("SELECT COUNT(*) FROM categories WHERE categories_no = #{categoryNo} AND soft_delete = 'N'")
