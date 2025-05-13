@@ -24,4 +24,15 @@ public class RequestMenuDto {
         private Integer menuPrice;
         private String description;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public class UpdateMenuDto {
+        private Long categoriesNo;    // null이면 변경 없음
+        private String menuName;      // null이면 변경 없음
+        private Integer menuPrice;    // null이면 변경 없음
+        private String description;   // null이면 변경 없음
+    }
 }
