@@ -56,11 +56,11 @@ public class ReissueService {
         // 4. 사용자 정보 추출
         String userId = jwtUtil.getUserId(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
-        Long storeNo = Long.valueOf(jwtUtil.getStoredNo(refreshToken));
+        Long storedNo = jwtUtil.getStoredNo(refreshToken);
 
         // 5. 새 토큰 생성
-        String newAccess = jwtUtil.createJwt("access", userId, role, storeNo,600_000L); // 10분
-        String newRefresh = jwtUtil.createJwt("refresh", userId, role, storeNo,86_400_000L); // 24시간
+        String newAccess = jwtUtil.createJwt("access", userId, role, storedNo,600_000L); // 10분
+        String newRefresh = jwtUtil.createJwt("refresh", userId, role, storedNo,86_400_000L); // 24시간
 
         //Refresh 토큰 저장 DB에 기존 Refresh삭제 후 새 Refresh토즌 저장
         refreshTokenRepository.deleteByRefresh(refreshToken);

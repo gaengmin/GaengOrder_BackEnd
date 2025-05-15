@@ -40,9 +40,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final RefreshTokenRepository refreshTokenRepository;
 
 
-
-
-
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
@@ -103,8 +100,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
         Long storeNo = userDetails.getStoreNo(); // storeNo 추출
 
+        System.out.println();
+
         // 3. JWT 토큰 생성 (Access: 10분, Refresh: 24시간)
-        String access = jwtUtil.createJwt("access", userId, role, storeNo,600000L); // 10분(600,000ms)
+        String access = jwtUtil.createJwt("access", userId, role, storeNo,6000000L); // 100분(600,000ms)
         String refresh = jwtUtil.createJwt("refresh", userId, role, storeNo,86400000L); // 24시간(86,400,000ms)
 
         //4. 리프래쉬 토큰 저장

@@ -91,47 +91,4 @@ public class JWTFilter extends OncePerRequestFilter {
         // 8. 다음 필터로 요청 전달 (인증된 상태)
         filterChain.doFilter(request, response);
     }
-
-  /*  @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        String authorization = request.getHeader("Authorization");
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
-            System.out.println("token null");
-
-            filterChain.doFilter(request, response);
-
-            return;
-        }
-
-        System.out.println("authorization now");
-
-        String token = authorization.substring(7); // "Bearer " 다음부터 끝까지 추출
-
-        if (jwtUtil.isExpired(token)) {
-
-            System.out.println("token expired");
-            filterChain.doFilter(request, response);
-
-            return;
-        }
-
-
-        String userId = jwtUtil.getUserId(token);
-        Role role = Role.valueOf(jwtUtil.getRole(token));
-
-        Users users = Users.builder()
-                .userId(userId)
-                .pwd("temppassword")
-                .role(role)                 // role 값 설정
-                .build();
-
-        CustomUserDetails customUserDetails = new CustomUserDetails(users);
-
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-        //세션에 사용자 등록
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-        filterChain.doFilter(request, response);
-    }*/
 }
