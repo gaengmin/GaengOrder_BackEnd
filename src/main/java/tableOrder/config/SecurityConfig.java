@@ -74,21 +74,28 @@ public class SecurityConfig {
          * */
         // ======= 공통 보안 정책 적용 =======
         http.authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/api-docs/json/all-apis").permitAll() // ← Swagger 문서 경로 허용
                         .requestMatchers("/api/login").permitAll() // 1.로그인 허용(모든 사용자 접근 가능)
                         .requestMatchers("/api/auth/reissue").permitAll() // 2. 토큰 재발급 허용
                         .requestMatchers("/api/logout").authenticated() // 3. 로그아웃은 인증된 사용자만
                         .requestMatchers("/api/superAdmin/**").hasAuthority("SUPERADMIN") // 4. SUPERADMIN 권한 필요
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN") // 5. ADMIN 권한 필요
                         .requestMatchers("/api/orders/**").hasAnyAuthority("ORDERS", "ADMIN") // 6. ORDERS 또는 ADMIN 권한 필요
-                        .requestMatchers("/api/categories/**").hasRole("ADMIN") // 그 외 메서드는 ADMIN
+                        .requestMatchers("/api/categories/**").hasAuthority("ADMIN") // 그 외 메서드는 ADMIN
                         .requestMatchers(HttpMethod.GET, "/api/menus/**").permitAll() // GET은 모든 사용자 허용
                         .requestMatchers("/api/menus/**").hasAnyRole("ADMIN", "ORDERS")
 //                .requestMatchers("/api/categories/**").hasAnyAuthority("ADMIN") // 7. ADMIN 권한 필요
                         .anyRequest().authenticated() // 이외의 경로는 권한이 필요함.
         );
+
+        /**
+         * 1. addFilterBefore(Filter, Class) : 기존 필터 앞에 추가
+         * 2. addFilterAt(Filter, Class)` 기존 필터의 **위치에** 커스텀 필터를 대체합니다.
+         * */
+        http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
         http.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository), LogoutFilter.class);
-        http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
