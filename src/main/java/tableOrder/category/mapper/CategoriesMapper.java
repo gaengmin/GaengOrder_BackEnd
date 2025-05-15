@@ -5,6 +5,11 @@ import tableOrder.category.dto.request.RequestCategoryDto;
 
 @Mapper
 public interface CategoriesMapper {
+    //카테고리 번호로 매장 등록번호 찾기
+    @Select("SELECT STORE_NO FROM categories WHERE categories_no = #{categoriesNo}")
+    Long getStoreNoByCategoryNo(@Param("categoriesNo") Long categoriesNo);
+
+
     //사업자 번호로 매장 id 찾기
     @Select("SELECT STORE_NO FROM STORES WHERE BUSINESS_NO = #{businessNo}")
     Long findByStoreNo(@Param("businessNo") String businessNo);

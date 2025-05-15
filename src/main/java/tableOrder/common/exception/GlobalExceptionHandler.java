@@ -1,6 +1,7 @@
 package tableOrder.common.exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -17,6 +18,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<String> handleNullPointer(NullPointerException e) {
         return ResponseEntity.status(500).body("Null 값 오류가 발생했습니다.");
+    }
+
+    //접근제한 Exception
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleIllegalArgument(AccessDeniedException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
     // 3. 여러 예외를 한 번에 처리

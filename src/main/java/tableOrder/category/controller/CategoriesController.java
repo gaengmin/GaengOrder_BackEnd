@@ -26,6 +26,7 @@ public class CategoriesController {
      * - 실패(카테고리 없음 등) 시 400 Bad Request와 에러 메시지 반환
      */
     @PatchMapping("/categories/{categoriesNo}/updateName")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> changeCategoryName(
             @PathVariable Long categoriesNo,
             @RequestBody @Validated RequestCategoryDto.UpdateCategory updateCategory) {
