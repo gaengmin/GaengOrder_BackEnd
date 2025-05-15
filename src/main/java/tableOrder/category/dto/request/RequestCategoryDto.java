@@ -15,8 +15,6 @@ public class RequestCategoryDto {
     public static class InsertCategory {
         @NotBlank(message = "카테고리 이름은 필수")
         private String name;
-        @NotBlank(message = "사업자번호는 필수")
-        private String businessNo;
     }
 
     @Getter

@@ -29,6 +29,9 @@ spring:
         # 출력되는 SQL을 보기 좋게 정렬
         format_sql: true
 
+logging:
+  level:
+    org.springframework.security: DEBUG
 
 mybatis:
   config-location: classpath:mybatis-config.xml

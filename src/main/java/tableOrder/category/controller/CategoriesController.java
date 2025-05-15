@@ -5,11 +5,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import tableOrder.category.dto.request.RequestCategoryDto;
 import tableOrder.category.service.CategoriesService;
 import tableOrder.common.dto.ResponseDto;
+import tableOrder.users.dto.security.CustomUserDetails;
+
+import java.util.List;
 
 @Tag(name = "카테고리 API", description = "카테고리 관련 API")
 @RestController
@@ -20,13 +24,23 @@ public class CategoriesController {
     private final CategoriesService categoriesService;
 
     /**
+     * 카테고리 Position 수정 API
+     */
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PatchMapping("/categories/rePosition")
+    public ResponseEntity<?> updateOrder(@Validated @RequestBody List<Long> orderedCategoryIds) {
+        categoriesService.updateCategoryOrder(orderedCategoryIds);
+        return ResponseEntity.ok("순서가 정상적으로 변경이 되었습니다.");
+    }
+
+    /**
      * 카테고리명 수정 API
      * - 카테고리 번호와 새 이름을 받아 카테고리명을 변경합니다.
      * - 성공 시 200 OK와 성공 메시지 반환
      * - 실패(카테고리 없음 등) 시 400 Bad Request와 에러 메시지 반환
      */
     @PatchMapping("/categories/{categoriesNo}/updateName")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> changeCategoryName(
             @PathVariable Long categoriesNo,
             @RequestBody @Validated RequestCategoryDto.UpdateCategory updateCategory) {
@@ -41,10 +55,11 @@ public class CategoriesController {
      * - 유효하지 않은 데이터(IllegalArgumentException)는 400(Bad Request)로 처리
      */
     @PostMapping("/categories")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> insertCategory(
             @RequestBody @Validated RequestCategoryDto.InsertCategory insertCategory) {
         categoriesService.insertCategory(insertCategory);
+
 
         return ResponseEntity.status(200).body("카테고리 등록 완료");
     }
@@ -56,7 +71,7 @@ public class CategoriesController {
      * - 유효하지 않은 데이터(IllegalArgumentException)는 400(Bad Request)로 처리
      */
     @PatchMapping("/categories/{categoriesNo}/soft-delete")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> softDeleteCategory(@PathVariable Long categoriesNo, @RequestBody @Validated RequestCategoryDto.SoftDeleteCategory deleteCategory) {
         categoriesService.softDeleteCategory(categoriesNo, deleteCategory);
 
