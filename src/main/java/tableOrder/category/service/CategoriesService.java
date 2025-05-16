@@ -4,10 +4,12 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tableOrder.auth.util.AbstractAuthValidator;
 import tableOrder.auth.util.SecurityUtil;
 import tableOrder.category.dto.request.RequestCategoryDto;
 import tableOrder.category.mapper.CategoriesMapper;
@@ -18,10 +20,16 @@ import java.util.List;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class CategoriesService {
-    private final CategoriesMapper categoriesMapper;
+public class CategoriesService extends AbstractAuthValidator {
+
+
     private final MenuMapper menuMapper;
+
+    @Autowired
+    public CategoriesService(CategoriesMapper categoriesMapper, MenuMapper menuMapper) {
+        super(categoriesMapper);
+        this.menuMapper = menuMapper;
+    }
 
     /**
      *  순서 변경하는 메소드
@@ -167,17 +175,7 @@ public class CategoriesService {
         categoriesMapper.insertCategory(userStoreNo, insertCategory.getName(), nextPosition);
     }
 
-    //공통으로 권한체크 하는 method
-    private void verifyStoreOwner(Long userStoreNo, String userId, String methodName) {
-        // 매장 소유주 확인 (Null 체크 추가)
-        String findUserId = categoriesMapper.findByStoreUserId(userStoreNo);
-        if (findUserId == null) {
-            throw new IllegalArgumentException("매장 정보가 존재하지 않습니다.");
-        }
-        if (!userId.equals(findUserId)) {
-            throw new AccessDeniedException(methodName+"은 본인 매장에서 만 가능합니다.");
-        }
-    }
+
 
 
 
