@@ -26,7 +26,7 @@ public class MenuController {
      * 3) 메뉴 삭제 기능  PATCH  /api/menus/{menNo}/soft-delete -> positioning까지 해야함.
      *
      * ## Orders 구현
-     * 1) 메뉴 판매 여부 가능  /api/menus/{menuId}/availability
+     * 1) 메뉴 판매 여부 가능  /api/menus/{menuId}/availability 완료
      *
      * ## 고객 페이지 메뉴 조회
      * GET /api/categories-with-menus
