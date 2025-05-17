@@ -17,7 +17,7 @@ public abstract class AbstractAuthValidator {
 
     // 공통 권한 체크 메서드
     protected void verifyStoreOwner(Long userStoreNo, String userId, String methodName) {
-        String findUserId = categoriesMapper.findByStoreUserId(userStoreNo);
+        String findUserId = categoriesMapper.findByStoreUserId(userStoreNo, userId);
         if (findUserId == null) {
             throw new IllegalArgumentException("매장 정보가 존재하지 않습니다.");
         }

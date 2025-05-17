@@ -16,8 +16,8 @@ public interface CategoriesMapper {
 
 
     //사업자 번호로 매장 id 찾기
-    @Select("SELECT user_id FROM users WHERE store_no = #{userStoreNo}")
-    String findByStoreUserId(@Param("userStoreNo") Long userStoreNo);
+    @Select("SELECT user_id FROM users WHERE store_no = #{userStoreNo} and user_id = #{userId}")
+    String findByStoreUserId(@Param("userStoreNo") Long userStoreNo, @Param("userId") String userid);
 
     //데이터 삽입시
     @Insert("INSERT INTO categories (store_no, name, position) VALUES (#{storeNo}, #{name}, #{position})")
@@ -41,6 +41,7 @@ public interface CategoriesMapper {
     @Select("SELECT COUNT(*) FROM CATEGORIES WHERE store_no = #{storeNo} AND name = #{name} AND soft_delete = 'N'")
     int countByStoreNoAndName(@Param("storeNo") Long storeNo, @Param("name") String name);
 
+    // 카테고리 순서
     @Update("UPDATE categories SET position = #{position} WHERE categories_no = #{categoriesNo}")
     void updateCategoryOrder(@Param("categoriesNo") Long categoriesNo, @Param("position") int position);
 }
