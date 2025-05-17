@@ -2,10 +2,7 @@ package tableOrder.menu.dto.request;
 
 import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 public class RequestMenuDto {
@@ -35,4 +32,15 @@ public class RequestMenuDto {
         private Integer menuPrice;    // null이면 변경 없음
         private String description;   // null이면 변경 없음
     }
+
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PositionMenuDto {
+        private Long menuNo;
+        private int position;
+    }
+
 }

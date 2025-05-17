@@ -5,9 +5,12 @@ import jakarta.validation.constraints.NotNull;
 import org.apache.ibatis.annotations.*;
 import tableOrder.menu.dto.request.RequestMenuDto;
 
+import java.util.List;
+
 @Mapper
 public interface MenuMapper {
 
+    //Mapper파일 쿼리 있음
     /**동적처리로 해서 메뉴판매상태를 조절 -> N이면 , Y-> N으로 */
     int updateMenuStatus(Long menuNo);
 
@@ -18,6 +21,10 @@ public interface MenuMapper {
 
     @Select("select count(*) from MENU where categories_no = #{value}")
     int cntByMenu(Long categoriesNo);
+
+    @Select("select count(*) from menu where menu_no = #{menuNo}")
+    int cntByMenuNo(Long menuNo);
+
 
 
 
@@ -36,4 +43,10 @@ public interface MenuMapper {
     /** 현재 존재하는 카테고리 수*/
     @Select("SELECT COUNT(*) FROM menu WHERE categories_no = #{categoriesNo} AND soft_delete = 'N'")
     int cntPosition(Long categoriesNo);
+
+ /*   @Update("UPDATE MENU SET POSITION = #{position} WHERE MENU_NO = #{menuNo}")
+    void updateMenuOrder(@Param("menuNo") Long menuNo, @Param("position") int position);*/
+
+    /**ForEach을 통한 Update문 작성*/
+    void updateMenuForEachOrder(@Param ("positions") List<RequestMenuDto.PositionMenuDto> positions);
 }

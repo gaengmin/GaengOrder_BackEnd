@@ -3,6 +3,20 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="tableOrder.menu.mapper.MenuMapper">
+    <!-- 다중 메뉴 배치할 때, 쿼리
+    MyBatis의 <foreach>에서 separator=";"는 각 반복문에서 생성되는 SQL 문장 사이에 세미콜론(;)을 넣어준다는 의미-->
+
+    <update id = "updateMenuForEachOrder">
+        <foreach collection="positions" item="item" separator=";">
+            UPDATE MENU
+            SET position = #{item.position}
+            WHERE menu_no = #{item.menuNo}
+        </foreach>
+
+    </update>
+    
+    
+    <!-- FUNCTION : 상태 변화 쿼리-->
     <update id="updateMenuStatus" parameterType="long">
         UPDATE MENU
         set menu_status =

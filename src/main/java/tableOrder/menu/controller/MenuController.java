@@ -19,11 +19,11 @@ public class MenuController {
     /**
      * TODO : 개발 해야할 것
      * ## Admin 구역
-     * 1) 메뉴추가 기능 (POST /api/menus)
+     * 1) 메뉴추가 기능 (POST /api/menus) - 완료
+     * 4) 메뉴 판매 여부 기능 PATCH  /api/menus/{menuId}/availability - 완료 (ADMIN / ORDERS 완료)
+     * 5) 메뉴 순서 PATCH /api/menus/reposition 완료 -> 성능 비교까지
      * 2) 메뉴정보 수정 기능 PATCH /api/menus/{menuNo}
      * 3) 메뉴 삭제 기능  PATCH  /api/menus/{menNo}/soft-delete -> positioning까지 해야함.
-     * 4) 메뉴 판매 여부 기능 PATCH  /api/menus/{menuId}/availability
-     * 5) 메뉴 순서 PATCH /api/menus/reposition
      *
      * ## Orders 구현
      * 1) 메뉴 판매 여부 가능  /api/menus/{menuId}/availability
@@ -42,13 +42,23 @@ public class MenuController {
         return ResponseEntity.status(200).body("메뉴 등록 성공");
     }
 
+    /**메뉴 판매 여부 수정*/
+    @PatchMapping("/menus/{menuNo}/availability")
+    @PreAuthorize("hasAnyAuthority('ADMIN','ORDERS')")
+    ResponseEntity<?> addMenu(@PathVariable Long menuNo) {
+        menuService.updateMenuStatus(menuNo);
+
+        return ResponseEntity.status(200).body("메뉴 판매 상태 변화 성공");
+    }
+
+
     /** 메뉴 순서 변경*/
     @PatchMapping("/menus/reposition")
     @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<?> repositionMenuData(@RequestBody @Validated List<Long> menuPositions) {
         menuService.repositionMenuData(menuPositions);
 
-        return ResponseEntity.status(200).body("메뉴 판매 상태 변화 성공");
+        return ResponseEntity.status(200).body("메뉴 판매 순서 변화 성공");
     }
 
     /** 메뉴 데이터 수정 - if 가격이라든가? 메뉴명이라든가? */
@@ -61,14 +71,6 @@ public class MenuController {
     }
 
 
-    /**메뉴 판매 여부 수정*/
-    @PatchMapping("/menus/{menuNo}/availability")
-    @PreAuthorize("hasAnyAuthority('ADMIN','ORDERS')")
-    ResponseEntity<?> addMenu(@PathVariable Long menuNo) {
-        menuService.updateMenuStatus(menuNo);
-
-        return ResponseEntity.status(200).body("메뉴 판매 상태 변화 성공");
-    }
 
 
 
