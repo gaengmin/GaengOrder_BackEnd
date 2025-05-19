@@ -31,6 +31,7 @@ public class RequestMenuDto {
         private String menuName;      // null이면 변경 없음
         private Integer menuPrice;    // null이면 변경 없음
         private String description;   // null이면 변경 없음
+        private Integer position;
     }
 
 

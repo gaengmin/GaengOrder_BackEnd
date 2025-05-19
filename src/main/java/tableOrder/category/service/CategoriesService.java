@@ -123,7 +123,7 @@ public class CategoriesService extends AbstractAuthValidator {
         }
 
         // 5. 메뉴 소프트 삭제
-        int menuCnt = menuMapper.cntByMenu(categoriesNo);
+        int menuCnt = menuMapper.countActiveMenusByCategoryNo(categoriesNo);
         if (menuCnt > 0) {
             menuMapper.softDeleteMenuByCategoriesNo(categoriesNo);
         }

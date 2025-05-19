@@ -3,10 +3,35 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="tableOrder.menu.mapper.MenuMapper">
+    <!--문제해결 방법 : resultMap과 Inner Class DTO 일 때 하위 클래스 선택시 $ 표시 안해서 에러 뜸.-->
+    <resultMap id="categoryMenuResultMap" type="tableOrder.category.dto.response.ResponseCategoryDto$ResponseListMenuDto">
+        <id property="menuNo" column="menu_no"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="menuName" column="menu_name"/>
+        <result property="menuPrice" column="menu_price"/>
+        <result property="menuStatus" column="menu_status"/>
+    </resultMap>
+
+    <select id="findMenusByCategorySorted" resultMap="categoryMenuResultMap">
+        SELECT
+            m.menu_no,
+            c.name AS category_name,
+            m.menu_name,
+            m.menu_price,
+            m.menu_Status
+        FROM menu m
+            inner join categories c
+            on c.categories_no = m.categories_no
+        where m.categories_no = #{categoriesNo}
+            and c.store_no = #{storeNo}
+            and m.soft_delete = 'N'
+        ORDER BY m.menu_status asc, m.position asc
+    </select>
+
     <!-- 다중 메뉴 배치할 때, 쿼리
     MyBatis의 <foreach>에서 separator=";"는 각 반복문에서 생성되는 SQL 문장 사이에 세미콜론(;)을 넣어준다는 의미-->
 
-    <update id = "updateMenuForEachOrder">
+    <update id="updateMenuForEachOrder">
         <foreach collection="positions" item="item" separator=";">
             UPDATE MENU
             SET position = #{item.position}
@@ -14,8 +39,8 @@
         </foreach>
 
     </update>
-    
-    
+
+
     <!-- FUNCTION : 상태 변화 쿼리-->
     <update id="updateMenuStatus" parameterType="long">
         UPDATE MENU
@@ -31,18 +56,11 @@
     <update id="updateMenuData" parameterType="map">
         UPDATE MENU
         <set>
-            <if test="dto.menuName != null">
-                menu_name = #{dto.menuName},
-            </if>
-            <if test="dto.menuPrice != null">
-                menu_price = #{dto.menuPrice},
-            </if>
-            <if test="dto.categoriesNo != null">
-                categories_no = #{dto.categoriesNo},
-            </if>
-            <if test="dto.description != null">
-                description = #{dto.description},
-            </if>
+            <if test="dto.menuName != null">, menu_name = #{dto.menuName}</if>
+            <if test="dto.menuPrice != null">, menu_price = #{dto.menuPrice}</if>
+            <if test="dto.categoriesNo != null">, categories_no = #{dto.categoriesNo}</if>
+            <if test="dto.description != null">, description = #{dto.description}</if>
+            <if test="dto.position != null">, position = #{dto.position}</if>
         </set>
         WHERE menu_no = #{menuNo}
     </update>

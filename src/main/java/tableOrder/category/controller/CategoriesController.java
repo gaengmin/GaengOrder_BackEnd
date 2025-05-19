@@ -9,8 +9,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import tableOrder.category.dto.request.RequestCategoryDto;
+import tableOrder.category.dto.response.ResponseCategoryDto;
 import tableOrder.category.service.CategoriesService;
 import tableOrder.common.dto.ResponseDto;
+import tableOrder.menu.service.MenuService;
 import tableOrder.users.dto.security.CustomUserDetails;
 
 import java.util.List;
@@ -22,6 +24,21 @@ import java.util.List;
 public class CategoriesController {
 
     private final CategoriesService categoriesService;
+    private final MenuService menuService;
+
+    /**
+     * TODO : 고객용
+     * 판매 중단 : 메뉴는 맨 밑으로 내리고
+     * 판매용 메뉴 위주가 먼저 보이게
+     * 카테고리 안에 존재하는 메뉴를 보기 **/
+    @GetMapping("/categories/{categoriesNo}/stores/{storeNo}/menu")
+    public ResponseEntity<List<ResponseCategoryDto.ResponseListMenuDto>> getMenusByCategoriesNo(@PathVariable int categoriesNo, @PathVariable int storeNo) {
+
+        List<ResponseCategoryDto.ResponseListMenuDto> menus = menuService.findMenusByCategory(categoriesNo, storeNo);
+
+        return ResponseEntity.ok(menus);
+    }
+
 
     /**
      * 카테고리 Position 수정 API

@@ -44,4 +44,6 @@ public interface CategoriesMapper {
     // 카테고리 순서
     @Update("UPDATE categories SET position = #{position} WHERE categories_no = #{categoriesNo}")
     void updateCategoryOrder(@Param("categoriesNo") Long categoriesNo, @Param("position") int position);
+
+
 }
