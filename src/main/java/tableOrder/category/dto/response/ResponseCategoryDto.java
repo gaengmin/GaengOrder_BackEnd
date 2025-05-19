@@ -3,7 +3,6 @@ package tableOrder.category.dto.response;
 import lombok.*;
 
 
-
 public class ResponseCategoryDto {
 
     @Data
@@ -11,15 +10,11 @@ public class ResponseCategoryDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class ResponseListMenuDto{
+    public static class ResponseListMenuDto {
         private Long menuNo;
         private String categoryName;
         private String menuName;
         private Integer menuPrice;
         private Character menuStatus;
     }
-
-
-
-
 }

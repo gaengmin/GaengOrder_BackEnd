@@ -17,7 +17,7 @@ import tableOrder.users.dto.security.CustomUserDetails;
 
 import java.util.List;
 
-@Tag(name = "카테고리 API", description = "카테고리 관련 API")
+@Tag(name = "카테고리 API", description = "카테고리 생성, 조회, 수정, 삭제 기능 제공")
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor

@@ -7,6 +7,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 import tableOrder.category.dto.response.ResponseCategoryDto;
 import tableOrder.menu.dto.request.RequestMenuDto;
+import tableOrder.menu.dto.response.ResponseMenuDto;
 
 import java.util.List;
 
@@ -88,6 +89,9 @@ public interface MenuMapper {
     @Select("SELECT menu_name from menu where menu_no = #{menuNo} and soft_delete='N'")
     String findMenuNameByMenuNo(Long menuNo);
 
+    @Select("SELECT count(*) from menu where menu_no = #{menuNo} and soft_delete='N'")
+    int countByMenuNo(Long menuNo);
+
     void updateMenuData(@Param("menuNo") Long menuNo,@Param("dto") RequestMenuDto.UpdateMenuDto updateMenudto);
 
     @Select("SELECT position from menu where menu_no = #{menuNo}")
@@ -103,4 +107,9 @@ public interface MenuMapper {
 
     /**메뉴 반환 쿼리*/
     List<ResponseCategoryDto.ResponseListMenuDto> findMenusByCategorySorted(@Param("categoriesNo")int categoriesNo, @Param("storeNo") int storeNo);
+
+    ResponseMenuDto.ResponseMenuDetailDto getMenuDataDetails(Long menuId);
+
+
+    List<ResponseMenuDto.ResponseMenuDataDto> searchMenusForLoadMore(@Param("storeNo")Long storeNo, @Param("keyword")String keyword, @Param("size")int size, @Param("offset")int offset);
 }

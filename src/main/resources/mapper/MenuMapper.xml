@@ -12,6 +12,42 @@
         <result property="menuStatus" column="menu_status"/>
     </resultMap>
 
+
+    <select id="searchMenusForLoadMore" resultType="tableOrder.menu.dto.response.ResponseMenuDto$ResponseMenuDataDto">
+        SELECT
+            m.menu_no AS menuNo,
+            c.name AS categoryName,
+            m.menu_name AS menuName,
+            m.menu_price AS menuPrice
+        FROM menu m
+        INNER JOIN categories c ON m.categories_no = c.categories_no
+        <where>
+            m.soft_delete = 'N'
+            AND c.store_no = #{storeNo}
+            <if test="keyword != null and keyword != ''">
+                AND m.menu_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY m.menu_name
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+
+    <!-- 단일 menu정보 -->
+    <select id = "getMenuDataDetails" resultType="tableOrder.menu.dto.response.ResponseMenuDto$ResponseMenuDetailDto">
+        SELECT
+            m.menu_no As menuNo,
+            c.name AS categoryName,
+            m.menu_name as menuName,
+            m.menu_price as menuPrice,
+            m.description as menuDescription
+        FROM menu m
+                 inner join categories c
+                            on c.categories_no = m.categories_no
+        where m.menu_no = #{menuNo}
+          and m.soft_delete = 'N'
+    </select>
+
     <select id="findMenusByCategorySorted" resultMap="categoryMenuResultMap">
         SELECT
             m.menu_no,

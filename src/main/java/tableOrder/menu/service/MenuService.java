@@ -3,6 +3,10 @@ package tableOrder.menu.service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -12,6 +16,7 @@ import tableOrder.auth.util.SecurityUtil;
 import tableOrder.category.dto.response.ResponseCategoryDto;
 import tableOrder.category.mapper.CategoriesMapper;
 import tableOrder.menu.dto.request.RequestMenuDto;
+import tableOrder.menu.dto.response.ResponseMenuDto;
 import tableOrder.menu.mapper.MenuMapper;
 
 import java.time.LocalDate;
@@ -220,6 +225,26 @@ public class MenuService extends AbstractAuthValidator {
 
     }
 
+    /**단일 메뉴 정보*/
+    public ResponseMenuDto.ResponseMenuDetailDto getMenuDataDetails(Long menuId) {
+        ResponseMenuDto.ResponseMenuDetailDto menuDetailDto;
+        if(menuMapper.countByMenuNo(menuId) == 0){
+            throw new IllegalArgumentException("해당 메뉴가 존재하지 않거나 현재 판매하지 않는 메뉴입니다.");
+        }
+        menuDetailDto = menuMapper.getMenuDataDetails(menuId);
+
+        if(menuDetailDto==null){
+            throw new IllegalArgumentException("해당 메뉴를 존재하지 않거나 현재 판매하지 않는 메뉴입니다.");
+        }
+
+        return menuDetailDto;
+    }
+
+    /**더보기용*/
+    public List<ResponseMenuDto.ResponseMenuDataDto> getMenusForLoadMore(Long storeNo, String keyword, int size, int offset) {
+        return menuMapper.searchMenusForLoadMore(storeNo, keyword, size, offset);
+    }
+
     /*
      * 소프트삭제가 되지 않은 메뉴 갯수 조회
      * */
@@ -227,4 +252,7 @@ public class MenuService extends AbstractAuthValidator {
 
         return menuMapper.countActiveMenuByMenuNo(menuNo);
     }
+
+
+
 }

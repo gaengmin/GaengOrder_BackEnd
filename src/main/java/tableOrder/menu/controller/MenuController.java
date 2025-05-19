@@ -1,15 +1,20 @@
 package tableOrder.menu.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import tableOrder.menu.dto.request.RequestMenuDto;
+import tableOrder.menu.dto.response.ResponseMenuDto;
 import tableOrder.menu.service.MenuService;
 
 import java.util.List;
+import java.util.Map;
 
+@Tag(name = "메뉴 API", description = "메뉴 생성, 조회, 수정, 삭제 기능 제공")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -24,16 +29,37 @@ public class MenuController {
      * 5) 메뉴 순서 PATCH /api/menus/reposition 완료 -> 성능 비교까지
      * 2) 메뉴정보 수정 기능 PATCH /api/menus/{menuNo} -> 테스트까지 완료
      * 3) 메뉴 삭제 기능  PATCH  /api/menus/{menNo}/soft-delete -> positioning까지 해야함. 테스트 완료
-     *
+     * <p>
      * ## Orders 구현
      * 1) 메뉴 판매 여부 가능  /api/menus/{menuId}/availability 완료
-     *
+     * <p>
      * ## 고객 페이지 메뉴 조회
-     * GET /api/categories-with-menus
-     * GET /api/menus/{menuId}
-     *
+     * GET /api/categories-with-menus -> 카테고리 Controller에서 만듬
+     * GET /api/menus/{menuId} ->
+     */
 
-     * */
+    /**고객일 때 더보기 화면으로 나올 수 있게 하는 */
+    @GetMapping("/menus/client/search/{storedNo}")
+    public  ResponseEntity<Map<String, Object>> getSearchMenuData(
+            @PathVariable Long storedNo,
+            @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "0") int offset, @RequestParam(defaultValue = "10" )int size) {
+        List<ResponseMenuDto.ResponseMenuDataDto> menus = menuService.getMenusForLoadMore(storedNo, keyword, size, offset);
+        boolean hasNext = menus.size() == size; // 다음 데이터가 더 있는지 여부
+        Map<String, Object> response = Map.of(
+                "menus", menus,
+                "hasNext", hasNext,
+                "nextOffset", offset + size
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/menus/{menuId}")
+    ResponseEntity<ResponseMenuDto.ResponseMenuDetailDto> getMenuDataDetails(@PathVariable Long menuId) {
+        ResponseMenuDto.ResponseMenuDetailDto menuDetailDto = menuService.getMenuDataDetails(menuId);
+
+        return ResponseEntity.ok(menuDetailDto);
+    }
+
     @PostMapping("/menus")
     @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<?> registrationMenu(@RequestBody @Validated RequestMenuDto.AddMenuDto addMenuDto) {
@@ -42,7 +68,9 @@ public class MenuController {
         return ResponseEntity.status(200).body("메뉴 등록 성공");
     }
 
-    /**메뉴 판매 여부 수정*/
+    /**
+     * 메뉴 판매 여부 수정
+     */
     @PatchMapping("/menus/{menuNo}/availability")
     @PreAuthorize("hasAnyAuthority('ADMIN','ORDERS')")
     ResponseEntity<?> addMenu(@PathVariable Long menuNo) {
@@ -52,7 +80,9 @@ public class MenuController {
     }
 
 
-    /** 메뉴 순서 변경*/
+    /**
+     * 메뉴 순서 변경
+     */
     @PatchMapping("/menus/reposition")
     @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<?> repositionMenuData(@RequestBody @Validated List<Long> menuPositions) {
@@ -68,7 +98,9 @@ public class MenuController {
      * 3.가격
      * 4.description
      * */
-    /** 메뉴 데이터 수정 - if 가격이라든가? 메뉴명이라든가? */
+    /**
+     * 메뉴 데이터 수정 - if 가격이라든가? 메뉴명이라든가?
+     */
     @PatchMapping("/menus/{menuNo}")
     @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<?> updateMenuData(@PathVariable Long menuNo, @RequestBody @Validated RequestMenuDto.UpdateMenuDto updateMenudto) {
@@ -90,7 +122,6 @@ public class MenuController {
 
         return ResponseEntity.status(200).body("메뉴 판매에 대한 삭제 성공");
     }
-
 
 
 }
