@@ -86,6 +86,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/categories/**").hasAuthority("ADMIN") // 그 외 메서드는 ADMIN
                         .requestMatchers(HttpMethod.GET, "/api/menus/**").permitAll() // GET은 모든 사용자 허용
                         .requestMatchers("/api/menus/**").hasAnyAuthority("ADMIN", "ORDERS")
+                        .requestMatchers(HttpMethod.POST,"/api/tables").hasAnyAuthority("ADMIN")
 //                .requestMatchers("/api/categories/**").hasAnyAuthority("ADMIN") // 7. ADMIN 권한 필요
                         .anyRequest().authenticated() // 이외의 경로는 권한이 필요함.
         );

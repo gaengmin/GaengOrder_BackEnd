@@ -38,6 +38,7 @@ public class MenuController {
      * GET /api/menus/{menuId} ->
      */
 
+
     /**고객일 때 더보기 화면으로 나올 수 있게 하는 */
     @GetMapping("/menus/client/search/{storedNo}")
     public  ResponseEntity<Map<String, Object>> getSearchMenuData(

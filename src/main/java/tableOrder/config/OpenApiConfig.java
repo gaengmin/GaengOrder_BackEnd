@@ -23,7 +23,8 @@ public class OpenApiConfig {
                         "tableOrder.orders.controller",
                         "tableOrder.category.controller",
                         "tableOrder.sales.controller",
-                        "tableOrder.ordersStatus.controller"
+                        "tableOrder.ordersStatus.controller",
+                        "tableOrder.tables.controller"
                 )
                 .build();
     }
