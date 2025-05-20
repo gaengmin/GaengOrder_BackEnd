@@ -8,6 +8,7 @@ import tableOrder.auth.util.SecurityUtil;
 import tableOrder.category.mapper.CategoriesMapper;
 import tableOrder.common.enums.SoftDelete;
 import tableOrder.tables.dto.request.RequestTablesDto;
+import tableOrder.tables.dto.response.ResponseTablesDto;
 import tableOrder.tables.entity.Tables;
 import tableOrder.tables.repository.TablesRepository;
 
@@ -27,6 +28,20 @@ public class TablesService extends AbstractAuthValidator {
         super.verifyStoreOwner(userStoreNo, userId, methodName);
     }
 
+
+    public ResponseTablesDto.ResponseTableInfoDto getTableData(Long storeNo, String tableCode) {
+
+        Tables tableData = tablesRepository.findByStoreNoAndTableCode(storeNo, tableCode)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블 정보"));
+
+        if(tableData.getSoftDelete()==SoftDelete.Y){
+            throw new IllegalArgumentException("삭제되거나 사용 불가한 테이블");
+        }
+
+        return ResponseTablesDto.ResponseTableInfoDto.from(tableData);
+    }
+
+
     /**
      * 1)테이블 번호 중복 체크
      * 2)저장
@@ -37,11 +52,10 @@ public class TablesService extends AbstractAuthValidator {
         Long userStoreNo = SecurityUtil.getCurrentUsersStoreNo();
         String userId = SecurityUtil.getCurrentUserId();
 
-        verifyStoreOwner(userStoreNo, userId, "매장 내 테이블 번호를 저장합니다.");
+        verifyStoreOwner(userStoreNo, userId, "매장 내 테이블 번호를 저장");
 
         validateTableCodeDuplicate(addStoreTableDto.getTableCode(), addStoreTableDto.getStoreNo(), SoftDelete.N, null);
 
-        // 서비스 코드
         Tables addStoreTable = addStoreTableDto.toEntity(userStoreNo);
         tablesRepository.save(addStoreTable);
     }
@@ -98,4 +112,6 @@ public class TablesService extends AbstractAuthValidator {
             throw new IllegalArgumentException("매장 내 이미 사용하는 테이블 코드입니다");
         }
     }
+
+
 }

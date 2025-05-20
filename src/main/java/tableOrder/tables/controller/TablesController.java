@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import tableOrder.tables.dto.request.RequestTablesDto;
+import tableOrder.tables.dto.response.ResponseTablesDto;
 import tableOrder.tables.service.TablesService;
 
 @Tag(name = "매장 테이블 관련 API", description = "테이블 생성, 조회, 수정, 삭제 기능 제공")
@@ -22,6 +23,15 @@ public class TablesController {
 
     private final TablesService tablesService;
 
+    @Operation(
+            summary = "테이블 접속 관련 Read",
+            description = "손님이 QR이나 웹페이지를 통한 접속시 유효한 테이블 정보인지 확인"
+    )
+    @GetMapping("/tables/{storeNo}/{tableCode}")
+    public ResponseEntity<ResponseTablesDto.ResponseTableInfoDto> getTablesData(@PathVariable Long storeNo, @PathVariable String tableCode){
+        ResponseTablesDto.ResponseTableInfoDto tableInfoDto = tablesService.getTableData(storeNo, tableCode);
+        return ResponseEntity.ok(tableInfoDto);
+    }
 
     @Operation(
             summary = "(관리자 기능)매장 테이블 생성",
