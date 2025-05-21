@@ -81,7 +81,6 @@ QR 기반 테이블 오더 시스템 백엔드 API 프로젝트입니다.
 DDD 설계 기반으로 각 도메인을 중심으로 분리 구성
 
 ```
-
 tableOrder
 ├── auth        # 인증/인가(JWT) 처리
 ├── category    # 카테고리 관리
@@ -96,7 +95,6 @@ tableOrder
 │   ├── mapper          # MyBatis XML 매퍼
 │   └── db              # DB 초기화 SQL
 └── TableOrderApplication.java
-
 ````
 
 - DTO는 `request`, `response`로 명확히 분리
