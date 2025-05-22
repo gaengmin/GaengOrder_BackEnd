@@ -34,9 +34,8 @@ public class MenuService extends AbstractAuthValidator {
         this.menuMapper = menuMapper;
     }
 
-    /**
-     *
-     * */
+
+
     @Transactional
     @PreAuthorize("hasAuthority('ADMIN')")
     public void registrationMenu(@Valid RequestMenuDto.AddMenuDto addMenuDto) {

@@ -14,6 +14,7 @@ import java.util.List;
 @Mapper
 public interface MenuMapper {
 
+
     /**
      * MenuMapper.xml
      * [메뉴 상태 토글]
@@ -112,4 +113,8 @@ public interface MenuMapper {
 
 
     List<ResponseMenuDto.ResponseMenuDataDto> searchMenusForLoadMore(@Param("storeNo")Long storeNo, @Param("keyword")String keyword, @Param("size")int size, @Param("offset")int offset);
+
+    /**메뉴 존재 여부*/
+    @Select("SELECT count(*) FROM MENU WHERE menu_no = #{menuNo}")
+    int existMenuByNo(@Param("menuNo") Long menuNo);
 }
