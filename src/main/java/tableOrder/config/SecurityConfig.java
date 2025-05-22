@@ -81,7 +81,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/logout").authenticated() // 3. 로그아웃은 인증된 사용자만
                         .requestMatchers("/api/superAdmin/**").hasAuthority("SUPERADMIN") // 4. SUPERADMIN 권한 필요
                         .requestMatchers("/api/admin/**").hasAuthority("ADMIN") // 5. ADMIN 권한 필요
-                        .requestMatchers("/api/orders/**").hasAnyAuthority("ORDERS", "ADMIN") // 6. ORDERS 또는 ADMIN 권한 필요
+                        .requestMatchers("/api/orders/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/*/stores/*/menu").permitAll()
                         .requestMatchers("/api/categories/**").hasAuthority("ADMIN") // 그 외 메서드는 ADMIN
                         .requestMatchers(HttpMethod.GET, "/api/menus/**").permitAll() // GET은 모든 사용자 허용

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="tableOrder.ordersItem.mapper.OrdersItemsMapper">
+
+    <insert id="saveOrdersItems">
+        INSERT INTO orders_items
+        (orders_no, menu_no, menu_name, quantity, menu_price)
+        VALUES
+        <foreach collection="orderItems" item="item" separator=",">
+            (
+            #{orderNo},
+            #{item.menuNo},
+            #{item.menuName},
+            #{item.quantity},
+            #{item.menuPrice}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

@@ -7,6 +7,7 @@ import tableOrder.auth.util.AbstractAuthValidator;
 import tableOrder.auth.util.SecurityUtil;
 import tableOrder.category.mapper.CategoriesMapper;
 import tableOrder.common.enums.SoftDelete;
+import tableOrder.orders.mapper.OrdersMapper;
 import tableOrder.tables.dto.request.RequestTablesDto;
 import tableOrder.tables.dto.response.ResponseTablesDto;
 import tableOrder.tables.entity.Tables;
@@ -16,11 +17,12 @@ import tableOrder.tables.repository.TablesRepository;
 public class TablesService extends AbstractAuthValidator {
 
     private final TablesRepository tablesRepository;
+    private final OrdersMapper ordersMapper;
 
-    public TablesService(CategoriesMapper categoriesMapper, TablesRepository tablesRepository) {
+    public TablesService(CategoriesMapper categoriesMapper, TablesRepository tablesRepository, OrdersMapper ordersMapper) {
         super(categoriesMapper);
         this.tablesRepository = tablesRepository;
-
+        this.ordersMapper = ordersMapper;
     }
 
     @Override
@@ -28,17 +30,18 @@ public class TablesService extends AbstractAuthValidator {
         super.verifyStoreOwner(userStoreNo, userId, methodName);
     }
 
-
     public ResponseTablesDto.ResponseTableInfoDto getTableData(Long storeNo, String tableCode) {
 
         Tables tableData = tablesRepository.findByStoreNoAndTableCode(storeNo, tableCode)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블 정보"));
 
-        if(tableData.getSoftDelete()==SoftDelete.Y){
+        if (tableData.getSoftDelete() == SoftDelete.Y) {
             throw new IllegalArgumentException("삭제되거나 사용 불가한 테이블");
         }
 
-        return ResponseTablesDto.ResponseTableInfoDto.from(tableData);
+        // 2. MyBatis로 최신 주문 상태 조회
+        String orderStatus = ordersMapper.checkOrdersStatusByTableNo(tableData.getTableNo());
+        return ResponseTablesDto.ResponseTableInfoDto.from(tableData, orderStatus);
     }
 
 
@@ -92,7 +95,7 @@ public class TablesService extends AbstractAuthValidator {
     }
 
 
-    private Tables findTableData(Long tableNo){
+    private Tables findTableData(Long tableNo) {
         return tablesRepository.findById(tableNo).orElseThrow(() -> new IllegalArgumentException("테이블을 찾을 수 없습니다."));
     }
 

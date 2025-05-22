@@ -8,9 +8,14 @@ public enum OrdersStatusEnum {
     CONFIRMED, //주문 확인
     COOKING, //조리 중
     SERVED, //서빙 중
+    PAID,
     CANCELLED,
-    CLEAN; // -> READY로 바로 전환 가기
+    CLEAN;
 
+    //추가 주문이 왔을 시 다시 주문 대기 상태로
+    public OrdersStatusEnum additionalMenu() {
+        return READY;
+    }
 
     public OrdersStatusEnum next() {
         switch (this) {
@@ -21,11 +26,13 @@ public enum OrdersStatusEnum {
             case COOKING:
                 return SERVED;
             case SERVED:
+                return PAID;
+            case PAID:
                 return CLEAN;
-            case CLEAN:
-                return READY;
             case CANCELLED:
                 return CANCELLED;
+            case CLEAN:
+                throw new IllegalStateException("새로운 주문을 받아야하는 테이블입니다." + this);
             default:
                 throw new IllegalStateException("Unknown status: " + this);
         }

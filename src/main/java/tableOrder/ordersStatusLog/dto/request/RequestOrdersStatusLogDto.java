@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import tableOrder.orders.dto.enums.OrdersStatusEnum;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,14 +15,18 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class RequestOrdersStatusLogDto {
-    @NotBlank(message = "이전 상태는 필수 입력값입니다.")
     private String previousStatus;
-    @NotBlank(message = "새 상태는 필수 입력값입니다.")
     private String newStatus;
-    @NotBlank(message = "변경한 사용자의 번호는 필수 입력값입니다.")
-    private Long userNo;
+    private String userId;
     private Long orderNo;
 
+    public static RequestOrdersStatusLogDto of(Long orderNo, OrdersStatusEnum previousStatus, OrdersStatusEnum newStatus, String userId) {
+        return RequestOrdersStatusLogDto.builder()
+                .orderNo(orderNo)
+                .previousStatus(previousStatus.name())
+                .newStatus(newStatus.name())
+                .userId(userId)
+                .build();
+    }
 }

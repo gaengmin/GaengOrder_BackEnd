@@ -25,8 +25,7 @@ public class TablesController {
 
     @Operation(
             summary = "테이블 접속 관련 Read",
-            description = "손님이 QR이나 웹페이지를 통한 접속시 유효한 테이블 정보인지 확인"
-    )
+            description = "손님이 QR이나 웹페이지를 통한 접속시 유효한 테이블 정보인지 확인 | tableNo | tableCode | storeNo | 주문상태 : status " )
     @GetMapping("/tables/{storeNo}/{tableCode}")
     public ResponseEntity<ResponseTablesDto.ResponseTableInfoDto> getTablesData(@PathVariable Long storeNo, @PathVariable String tableCode){
         ResponseTablesDto.ResponseTableInfoDto tableInfoDto = tablesService.getTableData(storeNo, tableCode);
