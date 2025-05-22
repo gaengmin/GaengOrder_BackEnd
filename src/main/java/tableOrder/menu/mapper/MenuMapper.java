@@ -114,7 +114,7 @@ public interface MenuMapper {
 
     List<ResponseMenuDto.ResponseMenuDataDto> searchMenusForLoadMore(@Param("storeNo")Long storeNo, @Param("keyword")String keyword, @Param("size")int size, @Param("offset")int offset);
 
-    /**메뉴 존재 여부*/
-    @Select("SELECT count(*) FROM MENU WHERE menu_no = #{menuNo}")
-    int existMenuByNo(@Param("menuNo") Long menuNo);
+
+    /**메뉴 존재 여부 - 메뉴 검증을 DTO에 담기*/
+    ResponseMenuDto.MenuValidateDto existMenuByNo(@Param("menuNo") Long menuNo);
 }

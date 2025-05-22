@@ -4,8 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tableOrder.common.enums.SoftDelete;
 
 public class ResponseMenuDto {
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class MenuValidateDto{
+        private Long menuNo;
+        private char menuStatus;
+        private SoftDelete softDelete;
+    }
 
     @Data
     @AllArgsConstructor

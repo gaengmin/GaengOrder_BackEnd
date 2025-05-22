@@ -12,6 +12,17 @@
         <result property="menuStatus" column="menu_status"/>
     </resultMap>
 
+    <select id = "existMenuByNo"
+            resultType="tableOrder.menu.dto.response.ResponseMenuDto$MenuValidateDto">
+        SELECT
+            menu_no as menuNo,
+            menu_status as menuStatus,
+            soft_delete as softDelete
+        FROM
+            menu
+        WHERE menu_no = #{menuNo}
+    </select>
+
 
     <select id="searchMenusForLoadMore" resultType="tableOrder.menu.dto.response.ResponseMenuDto$ResponseMenuDataDto">
         SELECT
