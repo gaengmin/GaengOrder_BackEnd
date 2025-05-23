@@ -9,8 +9,10 @@ public enum OrdersStatusEnum {
     COOKING, //조리 중
     SERVED, //서빙 중
     PAID,
+    DIRTY,
     CANCELLED,
     CLEAN;
+
 
     //추가 주문이 왔을 시 다시 주문 대기 상태로
     public OrdersStatusEnum additionalMenu() {
@@ -28,7 +30,7 @@ public enum OrdersStatusEnum {
             case SERVED:
                 return PAID;
             case PAID:
-                return CLEAN;
+                return DIRTY;
             case CANCELLED:
                 return CANCELLED;
             case CLEAN:

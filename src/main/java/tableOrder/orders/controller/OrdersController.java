@@ -15,6 +15,7 @@ import tableOrder.orders.service.OrdersService;
  * 1) 메뉴별 취소
  * 2) 영수증 기능?
  * 3) 결제 처리는 그냥 일단 안하고, STATUS PAID로 그냥 처리
+ * 4) Tables 관련해서 현재 상태에 따라 주문 추가주문인지, 새로운 주문인지, 주문 가능 여부 등등
  * */
 
 @RestController

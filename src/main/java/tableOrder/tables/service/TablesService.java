@@ -7,6 +7,7 @@ import tableOrder.auth.util.AbstractAuthValidator;
 import tableOrder.auth.util.SecurityUtil;
 import tableOrder.category.mapper.CategoriesMapper;
 import tableOrder.common.enums.SoftDelete;
+import tableOrder.orders.dto.enums.OrdersStatusEnum;
 import tableOrder.orders.mapper.OrdersMapper;
 import tableOrder.tables.dto.request.RequestTablesDto;
 import tableOrder.tables.dto.response.ResponseTablesDto;
@@ -41,7 +42,17 @@ public class TablesService extends AbstractAuthValidator {
 
         // 2. MyBatis로 최신 주문 상태 조회
         String orderStatus = ordersMapper.checkOrdersStatusByTableNo(tableData.getTableNo());
-        return ResponseTablesDto.ResponseTableInfoDto.from(tableData, orderStatus);
+        OrdersStatusEnum statusEnum;
+        if (orderStatus == null) {
+            statusEnum = OrdersStatusEnum.CLEAN; //주문이력이 없을 시 CLEAN으로 간주
+        } else {
+            statusEnum = OrdersStatusEnum.valueOf(orderStatus);
+        }
+        if(statusEnum == OrdersStatusEnum.CANCELLED || statusEnum == OrdersStatusEnum.DIRTY) {
+            throw new IllegalArgumentException("아직 자리 정리가 되지 않은 자리, 직원에게 문의해주세요");
+        }
+
+        return ResponseTablesDto.ResponseTableInfoDto.from(tableData, statusEnum.name());
     }
 
 
