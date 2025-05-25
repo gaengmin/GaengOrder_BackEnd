@@ -11,6 +11,7 @@ public enum OrdersStatusEnum {
     PAID,
     DIRTY,
     CANCELLED,
+    PARTIALLY_CANCELLED,
     CLEAN;
 
 

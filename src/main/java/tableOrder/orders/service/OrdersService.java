@@ -121,7 +121,7 @@ public class OrdersService extends AbstractAuthValidator {
         Long orderNo = orderWithTotalPriceDto.getOrderNo();
         System.out.println("orderNO : orderNo : " + orderNo);
         // 주문별 메뉴 저장
-        ordersItemsMapper.saveOrdersItems(orderNo, createOrderDto.getOrderItems());
+        ordersItemsMapper.saveOrdersItems(orderNo, createOrderDto.getOrderItems(), 0L);
 
         //Log에 저장
         RequestOrdersStatusLogDto logDto = RequestOrdersStatusLogDto.of(orderNo, OrdersStatusEnum.valueOf(currentStatus), OrdersStatusEnum.READY, null);
@@ -149,7 +149,7 @@ public class OrdersService extends AbstractAuthValidator {
         RequestOrdersDto.AdditionalUpdateMenuDto addMenuDto = RequestOrdersDto.AdditionalUpdateMenuDto.of(orderNo, totalPrice, statusEnum.name(), " 추가 주문",needData.getAdditionalOrder()+1);
         ordersMapper.updateAdditionMenu(addMenuDto);
         // 주문별 메뉴 저장
-        ordersItemsMapper.saveOrdersItems(orderNo, additionalMenuDto.getOrderItems());
+        ordersItemsMapper.saveOrdersItems(orderNo, additionalMenuDto.getOrderItems(), needData.getAdditionalOrder()+1L);
 
         //Log에 저장
         RequestOrdersStatusLogDto logDto = RequestOrdersStatusLogDto.of(orderNo, statusEnum, OrdersStatusEnum.READY, null);

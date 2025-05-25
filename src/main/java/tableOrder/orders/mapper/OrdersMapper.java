@@ -50,10 +50,26 @@ public interface OrdersMapper {
     //추가 메뉴에 대한 데이터 넣고 업데이트
     @Update("UPDATE orders SET " +
             "total_price = #{totalPrice}, " +
+            "final_price = #{totalPrice} - IFNULL(discount_price, 0)," +
             "order_status = #{orderStatus}, " +
             "reason = #{reason}, " +
             "additional_order = #{additionalOrder} " +
             "WHERE orders_no = #{orderNo}")
     void updateAdditionMenu(RequestOrdersDto.AdditionalUpdateMenuDto addMenuDto);
 
+    @Select("select count(*) from orders where orders_no = #{orderNo} and store_no = #{storeNo}")
+    int existOrdersByOrderNoAndStoreNo(@Param("orderNo") Long orderNo, @Param("storeNo") Long userStoreNo);
+
+    //주문 부분 취소시 금액 변경
+    @Update("""
+                UPDATE orders
+                SET 
+                    total_price = total_price - #{totalCancelAmount},
+                    final_price = total_price - #{totalCancelAmount}
+                WHERE orders_no = #{orderNo}
+            """)
+    void updateOrderAmount(
+            @Param("orderNo") Long orderNo,
+            @Param("totalCancelAmount") int totalCancelAmount
+    );
 }

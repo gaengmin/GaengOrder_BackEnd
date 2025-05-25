@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tableOrder.orders.dto.request.RequestOrdersDto;
+import tableOrder.orders.dto.response.ResponseOrdersDto;
 import tableOrder.orders.service.OrdersService;
 
 /**
@@ -25,6 +26,16 @@ import tableOrder.orders.service.OrdersService;
 public class OrdersController {
     private final OrdersService ordersService;
 
+/*    @Operation(
+            summary = "현재 손님의 주문 내역 조회 API",
+            description = "현재 테이블 주문 내역"
+    )
+    @GetMapping("/orders/{ordersNo}")
+    public ResponseEntity<ResponseOrdersDto> getOrders(@PathVariable("ordersNo") Long ordersNo) {
+
+
+        return ResponseEntity.ok()
+    }*/
     @Operation(
             summary = "손님이 주문하는 API",
             description = " 손님이 주문하는 API -> STATUS : READY만드는 것"

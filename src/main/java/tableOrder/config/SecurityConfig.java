@@ -89,6 +89,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/api/tables").hasAnyAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/tables/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/tables/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"api/ordersItem/{orderNo}/cancel").hasAuthority("ORDERS")
 
 //                .requestMatchers("/api/categories/**").hasAnyAuthority("ADMIN") // 7. ADMIN 권한 필요
                         .anyRequest().authenticated() // 이외의 경로는 권한이 필요함.
