@@ -5,7 +5,6 @@ import tableOrder.orders.dto.request.RequestOrdersDto;
 import tableOrder.ordersItem.dto.response.ResponseOrderItemsDto;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface OrdersItemsMapper {
@@ -67,4 +66,15 @@ public interface OrdersItemsMapper {
                 )
             """)
     void insertCancelHistory(ResponseOrderItemsDto.InsertCancelDto insertCancelDto);
+
+    /**전체 취소시 orderNo에 대한 것 모두 전체 취소 시킨다.**/
+    @Update("""
+            UPDATE orders_items 
+            SET 
+                is_canceled = 'Y',
+                cancel_reason = '전체 취소',
+                cancel_at = NOW()
+            WHERE orders_no = #{orderNo}
+            """)
+    void allCancelMenu(@Param("orderNo") Long orderNo);
 }

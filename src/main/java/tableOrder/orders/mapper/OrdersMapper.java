@@ -37,12 +37,22 @@ public interface OrdersMapper {
             "where orders_no = #{orderNo}")
     void updateOrdersStatus(@Param("nextStatus") String nextStatus, @Param("orderNo") Long orderNo);
 
-    //ORDERS 권한을 가지고 사용자가 삭제함.
-    @Update("update orders " +
-            "set order_status = #{status}, reason = #{cancelReason} " +
-            "where orders_no = #{orderNo}")
-    void cancelOrdersStatus(@Param("status") String status, @Param("orderNo") Long orderNo, @Param("cancelReason") String cancelReason);
-
+    //ORDERS 권한을 가지고 사용자가 삭제함. 젠체 취소시 상태뿐 아닌 금액도 0원 처리
+    @Update("""
+            UPDATE orders
+            SET
+                orders_status = #{orderStatus},
+                cancel_reason = #{cancelReason},
+                total_price = 0,
+                final_price = 0,
+                update_dt = NOW()
+            WHERE orders_no = #{orderNo}
+            """)
+    void cancelOrderAndResetAmount(
+            @Param("orderStatus") String orderStatus,
+            @Param("orderNo") Long orderNo,
+            @Param("cancelReason") String cancelReason
+    );
     @Select("SELECT additional_order as additionalOrder, total_price as totalPrice, order_status as orderStatus FROM ORDERS " +
             "WHERE ORDERS_NO = #{orderNo}")
     ResponseOrdersDto.AdditionalNeedData getTotalPriceByOrdersNo(@Param("orderNo") Long orderNo);
@@ -72,4 +82,9 @@ public interface OrdersMapper {
             @Param("orderNo") Long orderNo,
             @Param("totalCancelAmount") int totalCancelAmount
     );
+
+    //
+    ResponseOrdersDto.ReceiptDto getReceiptData(Long ordersNo);
+
+    ResponseOrdersDto.OrderDetailDto getOrdersDetailsData(Long ordersNo);
 }

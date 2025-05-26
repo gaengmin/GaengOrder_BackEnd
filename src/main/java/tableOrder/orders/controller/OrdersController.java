@@ -17,7 +17,7 @@ import tableOrder.orders.service.OrdersService;
  * 2) 영수증 기능?
  * 3) 결제 처리는 그냥 일단 안하고, STATUS PAID로 그냥 처리
  * 4) Tables 관련해서 현재 상태에 따라 주문 추가주문인지, 새로운 주문인지, 주문 가능 여부 등등
- * */
+ */
 
 @RestController
 @RequestMapping("/api")
@@ -26,16 +26,31 @@ import tableOrder.orders.service.OrdersService;
 public class OrdersController {
     private final OrdersService ordersService;
 
-/*    @Operation(
+
+    @Operation(
             summary = "현재 손님의 주문 내역 조회 API",
             description = "현재 테이블 주문 내역"
     )
-    @GetMapping("/orders/{ordersNo}")
-    public ResponseEntity<ResponseOrdersDto> getOrders(@PathVariable("ordersNo") Long ordersNo) {
+    @GetMapping("/orders/{ordersNo}/receipt")
+    public ResponseEntity<ResponseOrdersDto.ReceiptDto> getOrders(@PathVariable("ordersNo") Long ordersNo) {
+        ResponseOrdersDto.ReceiptDto receiptData = ordersService.getReceiptData(ordersNo);
 
 
-        return ResponseEntity.ok()
-    }*/
+        return ResponseEntity.ok(receiptData);
+    }
+    @Operation(
+            summary = "관리자급 주문 내역 조회 API",
+            description = "테이블 주문 내역"
+    )
+    @PreAuthorize("hasAnyAuthority('ORDERS', 'ADMIN')")
+    @GetMapping("/orders/{ordersNo}/details")
+    public ResponseEntity<ResponseOrdersDto.OrderDetailDto> getDetail(@PathVariable("ordersNo") Long ordersNo) {
+        ResponseOrdersDto.OrdersDetailDto detailData = ordersService.getDetailData(ordersNo);
+
+
+        return ResponseEntity.ok(detailData);
+    }
+
     @Operation(
             summary = "손님이 주문하는 API",
             description = " 손님이 주문하는 API -> STATUS : READY만드는 것"

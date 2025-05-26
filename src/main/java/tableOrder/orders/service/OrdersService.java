@@ -51,7 +51,8 @@ public class OrdersService extends AbstractAuthValidator {
         OrdersStatusEnum currentOrderStatus = ordersValidateMethod.parseOrderStatus(statusStr);
 
         //주문 취소
-        ordersMapper.cancelOrdersStatus(OrdersStatusEnum.CANCELLED.name(), orderNo, cancelOrderDto.getCancelReason());
+        ordersMapper.cancelOrderAndResetAmount(OrdersStatusEnum.CANCELLED.name(), orderNo, cancelOrderDto.getCancelReason());
+        ordersItemsMapper.allCancelMenu(orderNo);
         //Builder를 통한 저장
         RequestOrdersStatusLogDto logDto = RequestOrdersStatusLogDto.of(orderNo, currentOrderStatus, OrdersStatusEnum.CANCELLED, userId);
         ordersStatusLogMapper.saveLogData(logDto);
@@ -155,5 +156,15 @@ public class OrdersService extends AbstractAuthValidator {
         RequestOrdersStatusLogDto logDto = RequestOrdersStatusLogDto.of(orderNo, statusEnum, OrdersStatusEnum.READY, null);
         ordersStatusLogMapper.saveLogData(logDto);
 
+    }
+
+    public ResponseOrdersDto.ReceiptDto getReceiptData(Long ordersNo) {
+
+        return ordersMapper.getReceiptData(ordersNo);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ORDERS','ADMIN')")
+    public ResponseOrdersDto.OrdersDetailDto getDetailData(Long ordersNo) {
+        return ordersMapper.getOrdersDetailsData(ordersNo);
     }
 }
