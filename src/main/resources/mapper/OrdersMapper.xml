@@ -22,23 +22,45 @@
     <select id="getReceiptData"
             parameterType="map"
             resultMap="ReceiptResultMap">
-        SELECT
-            o.orders_no       AS orderNo,
-            s.store_name      AS storeName,
-            t.table_code      AS tableCode,
-            o.total_price     AS totalPrice,
-            o.discount_price  AS discountPrice,
-            (o.total_price - o.discount_price) AS finalPrice,
-            o.create_dt       AS orderTime,
-            ot.menu_name,
-            ot.menu_price,
-            ot.quantity,
-            (ot.menu_price * ot.quantity) AS menuLineTotal,
-            ot.is_canceled
+        SELECT o.orders_no                        AS orderNo,
+               s.store_name                       AS storeName,
+               t.table_code                       AS tableCode,
+               o.total_price                      AS totalPrice,
+               o.discount_price                   AS discountPrice,
+               (o.total_price - o.discount_price) AS finalPrice,
+               o.create_dt                        AS orderTime,
+               ot.menu_name,
+               ot.menu_price,
+               ot.quantity,
+               (ot.menu_price * ot.quantity)      AS menuLineTotal,
+               ot.is_canceled
         FROM Orders o
-                 INNER JOIN tables t      ON o.table_no = t.table_no
-                 INNER JOIN stores s      ON o.store_no = s.store_no
+                 INNER JOIN tables t ON o.table_no = t.table_no
+                 INNER JOIN stores s ON o.store_no = s.store_no
                  INNER JOIN orders_items ot ON ot.orders_no = o.orders_no
         WHERE o.orders_no = #{ordersNo}
+    </select>
+
+
+    <select id="getDailyData" resultType="tableOrder.analytics.dto.response.ResponseAnalyticsDto$SalesDto">
+        <![CDATA[
+        WITH RECURSIVE dates AS (SELECT #{from} AS d
+                                 UNION ALL
+                                 SELECT DATE_ADD(d, INTERVAL 1 DAY)
+                                 FROM dates
+                                 WHERE d < #{to}
+        )
+        SELECT dates.d AS date,
+        COUNT(orders_no) AS orderCount,
+        COALESCE(SUM(o.total_price), 0) AS totalPrice,
+        COALESCE(SUM(o.discount_price), 0) AS discountPrice,
+        COALESCE(SUM(o.total_price) - SUM(o.discount_price), 0) AS finalPrice
+        FROM dates
+            LEFT JOIN orders o
+        ON DATE (o.create_dt) = dates.d
+            AND o.store_no = #{storeNo}
+        GROUP BY dates.d
+        ORDER BY dates.d asc
+        ]]>
     </select>
 </mapper>

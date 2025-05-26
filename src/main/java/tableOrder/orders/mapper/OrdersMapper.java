@@ -2,10 +2,14 @@ package tableOrder.orders.mapper;
 
 import jakarta.validation.constraints.NotNull;
 import org.apache.ibatis.annotations.*;
+import tableOrder.analytics.dto.response.ResponseAnalyticsDto;
 import tableOrder.orders.dto.enums.OrdersStatusEnum;
 import tableOrder.orders.dto.request.RequestOrdersDto;
 import tableOrder.orders.dto.request.RequestOrdersDto.CreateOrderDtoWithTotalPrice;
 import tableOrder.orders.dto.response.ResponseOrdersDto;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Mapper
 public interface OrdersMapper {
@@ -84,4 +88,13 @@ public interface OrdersMapper {
     ResponseOrdersDto.ReceiptDto getReceiptData(@Param("ordersNo") Long ordersNo,@Param("storeNo") Long storeNo);
 
     ResponseOrdersDto.OrderDetailDto getOrdersDetailsData(Long ordersNo);
+
+    /*일간 데이터*/
+    List<ResponseAnalyticsDto.SalesDto> getDailyData(@Param("to")LocalDate to,@Param("from") LocalDate from, @Param("storeNo") Long storedNo);
+
+    /*주간 데이터*/
+    List<ResponseAnalyticsDto.SalesDto> getWeeklyData(@Param("to")LocalDate to,@Param("from") LocalDate from, @Param("storeNo") Long storedNo);
+
+    /*월간 데이터*/
+    List<ResponseAnalyticsDto.SalesDto> getMonthlyData(@Param("to")LocalDate to,@Param("from") LocalDate from, @Param("storeNo") Long storedNo);
 }
