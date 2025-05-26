@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tableOrder.orders.mapper.OrdersMapper">
+    <resultMap id="ReceiptResultMap" type="tableOrder.orders.dto.response.ResponseOrdersDto$ReceiptDto">
+        <id property="orderNo" column="orderNo"/>
+        <result property="storeName" column="storeName"/>
+        <result property="tableCode" column="tableCode"/>
+        <result property="totalPrice" column="totalPrice"/>
+        <result property="discountPrice" column="discountPrice"/>
+        <result property="finalPrice" column="finalPrice"/>
+        <result property="orderTime" column="orderTime"/>
+        <collection property="menuList" ofType="tableOrder.orders.dto.response.ResponseOrdersDto$ReceiptDto$MenuLine">
+            <result property="menuName" column="menu_name"/>
+            <result property="menuPrice" column="menu_price"/>
+            <result property="quantity" column="quantity"/>
+            <result property="menuLineTotal" column="menuLineTotal"/>
+            <result property="isCanceled" column="is_canceled"/>
+        </collection>
+    </resultMap>
+
+    <select id="getReceiptData"
+            parameterType="map"
+            resultMap="ReceiptResultMap">
+        SELECT
+            o.orders_no       AS orderNo,
+            s.store_name      AS storeName,
+            t.table_code      AS tableCode,
+            o.total_price     AS totalPrice,
+            o.discount_price  AS discountPrice,
+            (o.total_price - o.discount_price) AS finalPrice,
+            o.create_dt       AS orderTime,
+            ot.menu_name,
+            ot.menu_price,
+            ot.quantity,
+            (ot.menu_price * ot.quantity) AS menuLineTotal,
+            ot.is_canceled
+        FROM Orders o
+                 INNER JOIN tables t      ON o.table_no = t.table_no
+                 INNER JOIN stores s      ON o.store_no = s.store_no
+                 INNER JOIN orders_items ot ON ot.orders_no = o.orders_no
+        WHERE o.orders_no = #{ordersNo}
+    </select>
+</mapper>

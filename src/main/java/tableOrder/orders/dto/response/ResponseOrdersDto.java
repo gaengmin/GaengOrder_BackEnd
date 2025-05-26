@@ -2,7 +2,10 @@ package tableOrder.orders.dto.response;
 
 import lombok.*;
 
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class ResponseOrdersDto {
     @Data
@@ -14,59 +17,38 @@ public class ResponseOrdersDto {
         private String orderStatus;
     }
 
+
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class OrderBaseDto {
+    public static class ReceiptDto {
         private Long orderNo;
         private String storeName;
         private String tableCode;
-        private Timestamp orderTime;
-        private String orderStatus;
         private Integer totalPrice;
-        private java.util.List<MenuLine> menuList;
+        private Integer discountPrice;
+        private Integer finalPrice;
+        private LocalDateTime orderTime; // MySQL의 TIMESTAMP는 LocalDateTime으로 변환 가능
+        private List<MenuLine> menuList;
 
         @Getter
         @AllArgsConstructor
         @NoArgsConstructor
         @Builder
         public static class MenuLine {
-            private Long orderItemNo;
-            private Long menuNo;
             private String menuName;
-            private Integer unitPrice;
+            private Integer menuPrice;
             private Integer quantity;
-            private Integer lineTotal;
+            private Integer menuLineTotal;
             private Boolean isCanceled;
-            private String menuCategory;
-            private String cancelReason;
         }
     }
 
     @Getter
     @NoArgsConstructor
-    public static class ReceiptDto extends OrderBaseDto {
-        // Receipt 만의 특별 필드가 있으면 정의 (없으면 생략)
-        @Builder
-        public ReceiptDto(Long orderNo, String storeName, Long tableCode, String tableName,
-                          Timestamp orderTime, String orderStatus, Integer totalPrice,
-                          java.util.List<MenuLine> menuList) {
-            super(orderNo, storeName, tableCode, tableName, orderTime, orderStatus, totalPrice, menuList);
-        }
+    public static class OrderDetailDto {
+
     }
 
-    @Getter
-    @NoArgsConstructor
-    public static class OrderDetailDto extends OrderBaseDto {
-        private String cancelReason; // 전체주문 취소 사유
-
-        @Builder
-        public OrderDetailDto(Long orderNo, String storeName, Long tableCode, String tableName,
-                              Timestamp orderTime, String orderStatus, Integer totalPrice,
-                              java.util.List<MenuLine> menuList, String cancelReason) {
-            super(orderNo, storeName, tableCode, tableName, orderTime, orderStatus, totalPrice, menuList);
-            this.cancelReason = cancelReason;
-        }
-    }
 }

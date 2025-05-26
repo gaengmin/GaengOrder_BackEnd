@@ -15,6 +15,14 @@ public class OrdersValidateMethod {
     private final MenuMapper menuMapper;
 
     //주문 존재 검증
+    void validateOrderExists(Long orderNo, Long storeNo) {
+        int cnt = ordersMapper.existOrdersByOrderNoAndStoreNo(orderNo, storeNo);
+        if (cnt != 1) {
+            throw new IllegalArgumentException("존재하지 않는 주문번호 혹은 매장 번호가 일치하지 않습니다. 주문번호: " + orderNo);
+        }
+    }
+
+    //주문 존재 검증
     void validateOrderExists(Long orderNo) {
         int cnt = ordersMapper.existOrdersByOrderNo(orderNo);
         if (cnt != 1) {

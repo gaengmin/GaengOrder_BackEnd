@@ -44,7 +44,6 @@ public interface OrdersMapper {
                 orders_status = #{orderStatus},
                 cancel_reason = #{cancelReason},
                 total_price = 0,
-                final_price = 0,
                 update_dt = NOW()
             WHERE orders_no = #{orderNo}
             """)
@@ -60,7 +59,6 @@ public interface OrdersMapper {
     //추가 메뉴에 대한 데이터 넣고 업데이트
     @Update("UPDATE orders SET " +
             "total_price = #{totalPrice}, " +
-            "final_price = #{totalPrice} - IFNULL(discount_price, 0)," +
             "order_status = #{orderStatus}, " +
             "reason = #{reason}, " +
             "additional_order = #{additionalOrder} " +
@@ -74,8 +72,7 @@ public interface OrdersMapper {
     @Update("""
                 UPDATE orders
                 SET 
-                    total_price = total_price - #{totalCancelAmount},
-                    final_price = total_price - #{totalCancelAmount}
+                    total_price = total_price - #{totalCancelAmount}
                 WHERE orders_no = #{orderNo}
             """)
     void updateOrderAmount(
@@ -83,8 +80,8 @@ public interface OrdersMapper {
             @Param("totalCancelAmount") int totalCancelAmount
     );
 
-    //
-    ResponseOrdersDto.ReceiptDto getReceiptData(Long ordersNo);
+    //주문데이터 조회
+    ResponseOrdersDto.ReceiptDto getReceiptData(@Param("ordersNo") Long ordersNo,@Param("storeNo") Long storeNo);
 
     ResponseOrdersDto.OrderDetailDto getOrdersDetailsData(Long ordersNo);
 }

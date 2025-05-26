@@ -147,10 +147,10 @@ public class OrdersService extends AbstractAuthValidator {
         OrdersStatusEnum statusEnum = OrdersStatusEnum.valueOf(needData.getOrderStatus()).additionalMenu();
 
         //주문데이터 업데이트
-        RequestOrdersDto.AdditionalUpdateMenuDto addMenuDto = RequestOrdersDto.AdditionalUpdateMenuDto.of(orderNo, totalPrice, statusEnum.name(), " 추가 주문",needData.getAdditionalOrder()+1);
+        RequestOrdersDto.AdditionalUpdateMenuDto addMenuDto = RequestOrdersDto.AdditionalUpdateMenuDto.of(orderNo, totalPrice, statusEnum.name(), " 추가 주문", needData.getAdditionalOrder() + 1);
         ordersMapper.updateAdditionMenu(addMenuDto);
         // 주문별 메뉴 저장
-        ordersItemsMapper.saveOrdersItems(orderNo, additionalMenuDto.getOrderItems(), needData.getAdditionalOrder()+1L);
+        ordersItemsMapper.saveOrdersItems(orderNo, additionalMenuDto.getOrderItems(), needData.getAdditionalOrder() + 1L);
 
         //Log에 저장
         RequestOrdersStatusLogDto logDto = RequestOrdersStatusLogDto.of(orderNo, statusEnum, OrdersStatusEnum.READY, null);
@@ -158,13 +158,12 @@ public class OrdersService extends AbstractAuthValidator {
 
     }
 
-    public ResponseOrdersDto.ReceiptDto getReceiptData(Long ordersNo) {
+    //고객용 영수증 및 현재 주문 데이터 확인
+    public ResponseOrdersDto.ReceiptDto getReceiptData(Long storeNo, Long ordersNo) {
+        //주문번호 조회
+        ordersValidateMethod.validateOrderExists(ordersNo, storeNo);
 
-        return ordersMapper.getReceiptData(ordersNo);
+        return ordersMapper.getReceiptData(ordersNo, storeNo);
     }
 
-    @PreAuthorize("hasAnyAuthority('ORDERS','ADMIN')")
-    public ResponseOrdersDto.OrdersDetailDto getDetailData(Long ordersNo) {
-        return ordersMapper.getOrdersDetailsData(ordersNo);
-    }
 }
