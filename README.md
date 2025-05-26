@@ -61,7 +61,8 @@ Velog 시리즈
 
 > 실시간 주문/추가 주문/상태 이력/가격 이력까지 반영된 실무형 ERD
 
-![ERD]![img.png](img.png)
+<img width="761" alt="image" src="https://github.com/user-attachments/assets/966f8299-cd87-4eb9-b43e-c39c376787a2" />
+
 
 - `orders` + `orders_items`: 기본 주문 구조
 - `orders_status_log`: 주문 상태 변경 이력
