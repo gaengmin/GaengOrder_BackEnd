@@ -43,24 +43,64 @@
 
 
     <select id="getDailyData" resultType="tableOrder.analytics.dto.response.ResponseAnalyticsDto$SalesDto">
-        <![CDATA[
         WITH RECURSIVE dates AS (SELECT #{from} AS d
                                  UNION ALL
                                  SELECT DATE_ADD(d, INTERVAL 1 DAY)
                                  FROM dates
-                                 WHERE d < #{to}
-        )
-        SELECT dates.d AS date,
-        COUNT(orders_no) AS orderCount,
-        COALESCE(SUM(o.total_price), 0) AS totalPrice,
-        COALESCE(SUM(o.discount_price), 0) AS discountPrice,
-        COALESCE(SUM(o.total_price) - SUM(o.discount_price), 0) AS finalPrice
+                                 WHERE d &lt; #{to})
+        SELECT dates.d                                                 AS period,
+               COUNT(orders_no)                                        AS orderCount,
+               COALESCE(SUM(o.total_price), 0)                         AS totalPrice,
+               COALESCE(SUM(o.discount_price), 0)                      AS discountPrice,
+               COALESCE(SUM(o.total_price) - SUM(o.discount_price), 0) AS finalPrice
         FROM dates
-            LEFT JOIN orders o
-        ON DATE (o.create_dt) = dates.d
+                 LEFT JOIN orders o
+                           ON DATE (o.create_dt) = dates.d
             AND o.store_no = #{storeNo}
         GROUP BY dates.d
         ORDER BY dates.d asc
-        ]]>
+    </select>
+
+    <select id="getWeeklyData" resultType="tableOrder.analytics.dto.response.ResponseAnalyticsDto$SalesDto">
+        WITH RECURSIVE dates AS (SELECT #{weekStart} AS d
+                                 UNION ALL
+                                 SELECT DATE_ADD(d, INTERVAL 1 DAY)
+                                 FROM dates
+                                 WHERE d &lt; #{weekEnd})
+        SELECT CONCAT(
+                       DATE_SUB(MIN(dates.d), INTERVAL (DAYOFWEEK(MIN(dates.d))-1) DAY),
+                       ' ~ ',
+                       DATE_ADD(DATE_SUB(MIN(dates.d), INTERVAL (DAYOFWEEK(MIN(dates.d))-1) DAY), INTERVAL 6 DAY)
+               )                                                       AS period,
+               COUNT(o.orders_no)                                      AS orderCount,
+               COALESCE(SUM(o.total_price), 0)                         AS totalPrice,
+               COALESCE(SUM(o.discount_price), 0)                      AS discountPrice,
+               COALESCE(SUM(o.total_price) - SUM(o.discount_price), 0) AS finalPrice
+        FROM dates
+                 LEFT JOIN orders o
+                           ON DATE (o.create_dt) = dates.d
+            AND o.store_no = #{storeNo}
+        GROUP BY YEAR (dates.d), WEEK(dates.d, 0)
+        ORDER BY period DESC
+            LIMIT 12
+    </select>
+
+    <select id="getMonthlyData" resultType="tableOrder.analytics.dto.response.ResponseAnalyticsDto$SalesDto">
+        WITH RECURSIVE months AS (SELECT DATE_FORMAT(#{startMonth}, '%Y-%m-01') AS m
+                                  UNION ALL
+                                  SELECT DATE_ADD(m, INTERVAL 1 MONTH)
+                                  FROM months
+                                  WHERE m &lt; DATE_FORMAT(#{baseMonth}, '%Y-%m-01'))
+        SELECT DATE_FORMAT(months.m, '%Y-%m')                          AS period,
+               COUNT(o.orders_no)                                      AS orderCount,
+               COALESCE(SUM(o.total_price), 0)                         AS totalPrice,
+               COALESCE(SUM(o.discount_price), 0)                      AS discountPrice,
+               COALESCE(SUM(o.total_price) - SUM(o.discount_price), 0) AS finalPrice
+        FROM months
+                 LEFT JOIN orders o
+                           ON DATE_FORMAT(o.create_dt, '%Y-%m-01') = months.m
+                               AND o.store_no = #{storeNo}
+        GROUP BY period
+        ORDER BY period DESC LIMIT 12
     </select>
 </mapper>

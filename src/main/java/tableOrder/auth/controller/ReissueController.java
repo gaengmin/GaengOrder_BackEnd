@@ -1,5 +1,7 @@
 package tableOrder.auth.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +19,7 @@ import static tableOrder.common.utils.CookieUtil.extractRefreshToken;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Reissue API", description = "매출 집계, 메뉴별 판매량, 시간대 분석")
 @RequestMapping("/api/auth")
 public class ReissueController {
 
@@ -28,6 +31,10 @@ public class ReissueController {
      * 2. 서비스 호출
      * 3. 응답 헤더/쿠키 설정
      */
+    @Operation(
+            summary = "ADMIN 관리하는 일간(최대 30일) / 주간(기준일 기준 직전 12주) / 월간 매출 비교 (기준일 기준 직전 11개월)",
+            description = "ordersItemsNo가 필요하고, 그 데이터를 가져오고, 거기서 취소하는 데이터 생각"
+    )
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(
             HttpServletRequest request,

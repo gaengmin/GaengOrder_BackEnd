@@ -16,7 +16,7 @@ public class ResponseAnalyticsDto {
     @AllArgsConstructor
     @Builder
     public static class SalesDto{
-        private String date;
+        private String period;
         private Integer orderCount;
         private Integer totalPrice;
         private Integer discountPrice;

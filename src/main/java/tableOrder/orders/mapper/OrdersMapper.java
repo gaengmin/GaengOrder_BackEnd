@@ -93,8 +93,8 @@ public interface OrdersMapper {
     List<ResponseAnalyticsDto.SalesDto> getDailyData(@Param("to")LocalDate to,@Param("from") LocalDate from, @Param("storeNo") Long storedNo);
 
     /*주간 데이터*/
-    List<ResponseAnalyticsDto.SalesDto> getWeeklyData(@Param("to")LocalDate to,@Param("from") LocalDate from, @Param("storeNo") Long storedNo);
+    List<ResponseAnalyticsDto.SalesDto> getWeeklyData(@Param("weekStart")LocalDate weekStart, @Param("weekEnd")LocalDate weekEnd, @Param("storeNo") Long storedNo);
 
     /*월간 데이터*/
-    List<ResponseAnalyticsDto.SalesDto> getMonthlyData(@Param("to")LocalDate to,@Param("from") LocalDate from, @Param("storeNo") Long storedNo);
+    List<ResponseAnalyticsDto.SalesDto> getMonthlyData(@Param("baseMonth")LocalDate baseMonth, @Param("startMonth")LocalDate startMonth, @Param("storeNo") Long storedNo);
 }
