@@ -14,8 +14,7 @@ QR 기반 테이블 오더 시스템 백엔드 API 프로젝트입니다.
 
 설계 과정, 인증 처리 흐름, 주문 로직, 데이터 흐름 등 상세히 기록
 Velog 시리즈 
-👉 [나혼프 - 개발 블로그 전체 보기](https://velog.io/@gaengmin/posts?tag=%EB%82%98%ED%98%BC%ED%94%84)
-
+👉 [나혼프 - 개발 블로그 전체 보기](https://velog.io/@gaengmin/series/%EB%82%98%ED%98%BC%ED%94%84)
 ---
 
 ## 📌 프로젝트 개요
