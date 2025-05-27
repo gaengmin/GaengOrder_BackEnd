@@ -52,4 +52,15 @@ public class Users {
     @Column(length = 1)
     private SoftDelete softDelete; // 소프트 삭제 여부
 
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setPwd(String pwd) {
+        this.pwd = pwd;
+    }
+
+    public void setSoftDelete(SoftDelete softDelete) {
+        this.softDelete = softDelete;
+    }
 }
