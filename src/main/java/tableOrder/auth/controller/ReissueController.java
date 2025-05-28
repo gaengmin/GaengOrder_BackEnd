@@ -1,6 +1,7 @@
 package tableOrder.auth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +20,7 @@ import static tableOrder.common.utils.CookieUtil.extractRefreshToken;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Reissue API", description = "매출 집계, 메뉴별 판매량, 시간대 분석")
+@Tag(name = "Token Reissue API", description = "리프레시 토큰을 사용해 새로운 액세스 토큰과 리프레시 토큰을 발급받기 위한 API입니다.")
 @RequestMapping("/api/auth")
 public class ReissueController {
 
@@ -32,9 +33,18 @@ public class ReissueController {
      * 3. 응답 헤더/쿠키 설정
      */
     @Operation(
-            summary = "ADMIN 관리하는 일간(최대 30일) / 주간(기준일 기준 직전 12주) / 월간 매출 비교 (기준일 기준 직전 11개월)",
-            description = "ordersItemsNo가 필요하고, 그 데이터를 가져오고, 거기서 취소하는 데이터 생각"
+            summary = "JWT 토큰 재발급",
+            description = """
+                            클라이언트는 기존 리프레시 토큰을 사용하여 유효한 새로운 액세스 토큰과 리프레시 토큰을 발급받습니다. 
+                            요청 시 'refresh'라는 이름으로 저장된 쿠키에서 리프레시 토큰을 추출하여 처리합니다.
+                   
+                            **처리 과정:** 
+                            1. 클라이언트가 요청하면 서버는 쿠키에서 리프레시 토큰을 추출합니다.
+                            2. 추출된 리프레시 토큰을 서비스에 전달하여 새로운 액세스 토큰과 리프레시 토큰을 생성합니다.
+                            3. 새로 생성된 액세스 토큰은 응답 헤더에 추가되며, 리프레시 토큰은 응답 쿠키에 설정됩니다.
+                    """
     )
+    @SecurityRequirement(name = "Access")
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(
             HttpServletRequest request,

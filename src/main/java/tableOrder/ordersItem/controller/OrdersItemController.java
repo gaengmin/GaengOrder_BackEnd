@@ -1,6 +1,7 @@
 package tableOrder.ordersItem.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +29,7 @@ public class OrdersItemController {
     )
     @PostMapping("/ordersItem/{orderNo}/cancel")
     @PreAuthorize("hasAuthority('ORDERS')")
+    @SecurityRequirement(name = "Access")
     public ResponseEntity<?> partCancelOrdersItems(@PathVariable Long orderNo, @RequestBody @Validated RequestOrderItemsDto.OrdersMenuCancelDto ordersMenuCancelDto) {
         ordersItemService.partCancelOrdersItems(orderNo, ordersMenuCancelDto);
 

@@ -1,5 +1,6 @@
 package tableOrder.menu.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -63,6 +64,7 @@ public class MenuController {
 
     @PostMapping("/menus")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @SecurityRequirement(name = "Access")
     ResponseEntity<?> registrationMenu(@RequestBody @Validated RequestMenuDto.AddMenuDto addMenuDto) {
         menuService.registrationMenu(addMenuDto);
 
@@ -74,6 +76,7 @@ public class MenuController {
      */
     @PatchMapping("/menus/{menuNo}/availability")
     @PreAuthorize("hasAnyAuthority('ADMIN','ORDERS')")
+    @SecurityRequirement(name = "Access")
     ResponseEntity<?> addMenu(@PathVariable Long menuNo) {
         menuService.updateMenuStatus(menuNo);
 
@@ -86,6 +89,7 @@ public class MenuController {
      */
     @PatchMapping("/menus/reposition")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @SecurityRequirement(name = "Access")
     ResponseEntity<?> repositionMenuData(@RequestBody @Validated List<Long> menuPositions) {
         menuService.repositionMenuData(menuPositions);
 
@@ -104,6 +108,7 @@ public class MenuController {
      */
     @PatchMapping("/menus/{menuNo}")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @SecurityRequirement(name = "Access")
     ResponseEntity<?> updateMenuData(@PathVariable Long menuNo, @RequestBody @Validated RequestMenuDto.UpdateMenuDto updateMenudto) {
         menuService.updateMenuData(menuNo, updateMenudto);
 
@@ -118,6 +123,7 @@ public class MenuController {
      */
     @PatchMapping("/menus/{menuNo}/softDelete")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @SecurityRequirement(name = "Access")
     ResponseEntity<?> softDeleteMenuData(@PathVariable Long menuNo) {
         menuService.softDeleteMenu(menuNo);
 

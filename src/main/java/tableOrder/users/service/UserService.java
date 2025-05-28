@@ -17,6 +17,7 @@ import tableOrder.users.dto.enums.Role;
 import tableOrder.users.dto.request.RequestUsersDto;
 import tableOrder.users.dto.response.ResponseUsersDto;
 import tableOrder.users.entity.Users;
+import tableOrder.users.mapper.UsersMapper;
 import tableOrder.users.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -29,12 +30,14 @@ public class UserService extends AbstractAuthValidator {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder; //패스워드 인코더
     private final StoresMapper storesMapper;
+    private final UsersMapper usersMapper;
 
-    public UserService(CategoriesMapper categoriesMapper, PasswordEncoder passwordEncoder, UserRepository userRepository, StoresMapper storesMapper) {
+    public UserService(CategoriesMapper categoriesMapper, PasswordEncoder passwordEncoder, UserRepository userRepository, StoresMapper storesMapper, UsersMapper usersMapper) {
         super(categoriesMapper);
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.storesMapper = storesMapper;
+        this.usersMapper = usersMapper;
     }
 
     @PreAuthorize("hasAuthority('SUPERADMIN')")
@@ -151,11 +154,25 @@ public class UserService extends AbstractAuthValidator {
 
     /*매장 내 직원 조회*/
     @PreAuthorize("hasAuthority('ADMIN')")
-    public List<ResponseUsersDto.StoresEmployeeDto> getUsersData() {
+    public List<ResponseUsersDto.StoresEmployeeDto> getUsersListData() {
         String userId = SecurityUtil.getCurrentUserId();
         Long userStoreNo = SecurityUtil.getCurrentUsersStoreNo();
         verifyStoreOwner(userStoreNo, userId, "정보 조회");
 
-        return null;
+        List<ResponseUsersDto.UsersDto> usersList = usersMapper.getUserList(userStoreNo);
+
+        return ResponseUsersDto.StoresEmployeeDto.from(usersList);
+    }
+
+    /*매장 내 직원 조회*/
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseUsersDto.UsersData getUsersData() {
+        String userId = SecurityUtil.getCurrentUserId();
+        Long userStoreNo = SecurityUtil.getCurrentUsersStoreNo();
+        if (!SecurityUtil.getCurrentUserRole().contains("SUPERADMIN")) {
+            verifyStoreOwner(userStoreNo, userId, "정보 조회");
+        }
+        ResponseUsersDto.UsersDto usersDto = usersMapper.getUserData(userId,userStoreNo);
+        return ResponseUsersDto.UsersData.from(usersDto);
     }
 }

@@ -1,5 +1,6 @@
 package tableOrder.category.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,7 @@ public class CategoriesController {
      * 카테고리 Position 수정 API
      */
     @PreAuthorize("hasAuthority('ADMIN')")
+    @SecurityRequirement(name = "Access")
     @PatchMapping("/categories/rePosition")
     public ResponseEntity<?> updateOrder(@Validated @RequestBody List<Long> orderedCategoryIds) {
         categoriesService.updateCategoryOrder(orderedCategoryIds);
@@ -57,6 +59,7 @@ public class CategoriesController {
      * - 실패(카테고리 없음 등) 시 400 Bad Request와 에러 메시지 반환
      */
     @PatchMapping("/categories/{categoriesNo}/updateName")
+    @SecurityRequirement(name = "Access")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> changeCategoryName(
             @PathVariable Long categoriesNo,
@@ -72,6 +75,7 @@ public class CategoriesController {
      * - 유효하지 않은 데이터(IllegalArgumentException)는 400(Bad Request)로 처리
      */
     @PostMapping("/categories")
+    @SecurityRequirement(name = "Access")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> insertCategory(
             @RequestBody @Validated RequestCategoryDto.InsertCategory insertCategory) {
@@ -88,6 +92,7 @@ public class CategoriesController {
      * - 유효하지 않은 데이터(IllegalArgumentException)는 400(Bad Request)로 처리
      */
     @PatchMapping("/categories/{categoriesNo}/soft-delete")
+    @SecurityRequirement(name = "Access")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> softDeleteCategory(@PathVariable Long categoriesNo, @RequestBody @Validated RequestCategoryDto.SoftDeleteCategory deleteCategory) {
         categoriesService.softDeleteCategory(categoriesNo, deleteCategory);

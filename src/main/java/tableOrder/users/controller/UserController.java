@@ -2,6 +2,7 @@ package tableOrder.users.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,18 +34,31 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공 시 회원 목록 반환"),
                     @ApiResponse(responseCode = "403", description = "권한 부족")})
+    @GetMapping("/users/list")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @SecurityRequirement(name = "Access")
+    public ResponseEntity<List<ResponseUsersDto.StoresEmployeeDto>> getListUsers() {
+        List<ResponseUsersDto.StoresEmployeeDto> listUsersData = userService.getUsersListData();
+        return ResponseEntity.ok(listUsersData);
+    }
+
+    /**
+     * 매장 직원 확인
+     */
+    @Operation(
+            summary = "내 정보 조회",
+            description = "내 정보 조회")
     @GetMapping("/users")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<List<ResponseUsersDto.StoresEmployeeDto>> getUsers() {
-        List<ResponseUsersDto.StoresEmployeeDto> listUsersData = userService.getUsersData();
-        return ResponseEntity.ok(listUsersData);
+    @SecurityRequirement(name = "Access")
+    public ResponseEntity<ResponseUsersDto.UsersData> getUsers() {
+        ResponseUsersDto.UsersData usersData = userService.getUsersData();
+        return ResponseEntity.ok(usersData);
     }
 
     /**
      * 회원정보 삭제
      */
-    @PatchMapping("/softDeleteUsers")
-    @PreAuthorize("hasAnyAuthority('SUPERADMIN', 'ADMIN', 'ORDERS')")
     @Operation(
             summary = "회원 삭제 (Soft Delete)",
             description = "로그인된 사용자를 soft-delete 처리합니다. 권한: SUPERADMIN, ADMIN, ORDERS",
@@ -53,6 +67,9 @@ public class UserController {
                     @ApiResponse(responseCode = "403", description = "접근 권한 없음")
             }
     )
+    @PatchMapping("/softDeleteUsers")
+    @PreAuthorize("hasAnyAuthority('SUPERADMIN', 'ADMIN', 'ORDERS')")
+    @SecurityRequirement(name = "Access")
     public ResponseEntity<?> softDeleteUsers() {
 
         userService.softDeleteUsers();
@@ -75,6 +92,7 @@ public class UserController {
     )
     @PatchMapping("/updateUsers")
     @PreAuthorize("hasAnyAuthority('SUPERADMIN', 'ADMIN', 'ORDERS')")
+    @SecurityRequirement(name = "Access")
     public ResponseEntity<?> updateUsers(@RequestBody @Valid RequestUsersDto.updateUsersDto updateUsersDto) {
 
         userService.updateUsers(updateUsersDto);
@@ -98,6 +116,7 @@ public class UserController {
     )
     @PostMapping("/admin/join")
     @PreAuthorize("hasAuthority('SUPERADMIN')")
+    @SecurityRequirement(name = "Access")
     public ResponseEntity<?> joinSuperAdminUsers(@RequestBody @Valid RequestUsersDto.requestAdminJoinDto adminJoinDto) {
 
         log.info(adminJoinDto.getUserId());
@@ -118,6 +137,7 @@ public class UserController {
     )
     @PostMapping("/employee/join")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @SecurityRequirement(name = "Access")
     public ResponseEntity<?> joinAdminUsers(@RequestBody @Valid RequestUsersDto.requestOrdersJoinDto ordersJoinDto) {
 
         log.info(ordersJoinDto.getUserId());

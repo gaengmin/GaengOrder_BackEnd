@@ -26,6 +26,8 @@ public class Stores {
     private String storeName;
     @Column(length = 20)
     private String storeTel;
+    @Column(length = 200)
+    private String storeAddress;
     @Enumerated(EnumType.STRING)
     private SoftDelete softDelete;
 

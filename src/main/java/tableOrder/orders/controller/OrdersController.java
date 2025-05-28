@@ -1,6 +1,7 @@
 package tableOrder.orders.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +60,7 @@ public class OrdersController {
     )
     @PostMapping("/orders/{orderNo}")
     @PreAuthorize("hasAuthority('ORDERS')")
+    @SecurityRequirement(name = "Access")
     public ResponseEntity<?> updateOrderStatus(@PathVariable Long orderNo) {
         ordersService.updateStatus(orderNo);
         return ResponseEntity.ok("상태 변경 완료");
@@ -70,6 +72,7 @@ public class OrdersController {
     )
     @PostMapping("/orders/{orderNo}/cancel")
     @PreAuthorize("hasAuthority('ORDERS')")
+    @SecurityRequirement(name = "Access")
     public ResponseEntity<?> cancelOrderStatus(@PathVariable Long orderNo, @RequestBody RequestOrdersDto.CancelOrderDto cancelOrderDto) {
         ordersService.cancelStatus(orderNo, cancelOrderDto);
         return ResponseEntity.ok("주문 취소 완료");
