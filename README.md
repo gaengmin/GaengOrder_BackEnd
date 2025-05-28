@@ -113,7 +113,7 @@ tableOrder
 | 항목 | 내용 |
 |------|------|
 | 프레임워크 | Spring Boot 3 |
-| ORM | JPA (일부 MyBatis 병행) |
+| ORM | MyBatis 및 JPA(일부) |
 | DB | MySQL 8 |
 | 보안 | JWT (Access/Refresh), Security FilterChain |
 | 문서화 | Swagger (springdoc-openapi) |
