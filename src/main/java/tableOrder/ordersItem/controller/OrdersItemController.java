@@ -2,6 +2,7 @@ package tableOrder.ordersItem.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +15,8 @@ import tableOrder.ordersItem.service.OrdersItemService;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@Tag(name = "주문한 메뉴 관련 API", description = "부분취소")
+
 public class OrdersItemController {
 
     private final OrdersItemService ordersItemService;
