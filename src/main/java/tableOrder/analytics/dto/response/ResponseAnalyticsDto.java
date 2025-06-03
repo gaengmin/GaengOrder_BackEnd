@@ -11,6 +11,21 @@ import java.util.List;
 
 public class ResponseAnalyticsDto {
 
+    /**지난 한 주간 판매량*/
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class SalesMenuDto{
+        private String period; //기간
+        private String menuName;
+        private String categoryName;
+        private Integer orderCount;
+        private Integer freeCount;
+        private Integer amount;
+        private Integer rank;
+    }
+
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
@@ -22,5 +37,6 @@ public class ResponseAnalyticsDto {
         private Integer discountPrice;
         private Integer finalPrice;
     }
+
 
 }

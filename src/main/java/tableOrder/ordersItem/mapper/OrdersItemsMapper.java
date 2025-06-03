@@ -67,7 +67,9 @@ public interface OrdersItemsMapper {
             """)
     void insertCancelHistory(ResponseOrderItemsDto.InsertCancelDto insertCancelDto);
 
-    /**전체 취소시 orderNo에 대한 것 모두 전체 취소 시킨다.**/
+    /**
+     * 전체 취소시 orderNo에 대한 것 모두 전체 취소 시킨다.
+     **/
     @Update("""
             UPDATE orders_items 
             SET 

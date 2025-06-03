@@ -9,6 +9,7 @@ import tableOrder.auth.util.AbstractAuthValidator;
 import tableOrder.auth.util.SecurityUtil;
 import tableOrder.category.mapper.CategoriesMapper;
 import tableOrder.orders.mapper.OrdersMapper;
+import tableOrder.ordersItem.mapper.OrdersItemsMapper;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -19,10 +20,28 @@ import java.util.List;
 public class AdminAnalyticsService extends AbstractAuthValidator {
 
     private final OrdersMapper ordersMapper;
+    private final OrdersItemsMapper ordersItemsMapper;
 
-    public AdminAnalyticsService(CategoriesMapper categoriesMapper, OrdersMapper ordersMapper) {
+    public AdminAnalyticsService(CategoriesMapper categoriesMapper, OrdersMapper ordersMapper, OrdersItemsMapper ordersItemsMapper) {
         super(categoriesMapper);
         this.ordersMapper = ordersMapper;
+        this.ordersItemsMapper = ordersItemsMapper;
+    }
+
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public List<ResponseAnalyticsDto.SalesMenuDto> getMenuSalesAnalytics(RequestAnalyticsDto.SalesTop5Dto top5Dto) {
+        Long userStoreNo = SecurityUtil.getCurrentUsersStoreNo();
+        String userId = SecurityUtil.getCurrentUserId();
+
+        //공통으로 권한 체크
+        verifyStoreOwner(userStoreNo, userId, "관리자 페이지 기능");
+
+        List<ResponseAnalyticsDto.SalesMenuDto> salesMenuData;
+
+        salesMenuData = ordersItemsMapper.rank();
+
+        return salesMenuData;
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -87,4 +106,6 @@ public class AdminAnalyticsService extends AbstractAuthValidator {
             throw new IllegalArgumentException("일간 조회는 최대 30일까지 가능합니다.");
         }
     }
+
+
 }

@@ -14,7 +14,6 @@ import tableOrder.analytics.dto.request.RequestAnalyticsDto;
 import tableOrder.analytics.dto.response.ResponseAnalyticsDto;
 import tableOrder.analytics.service.AdminAnalyticsService;
 
-
 import java.util.List;
 
 @Tag(name = "관리자 분석 API", description = "매출 집계, 메뉴별 판매량, 시간대 분석")
@@ -31,11 +30,21 @@ public class AdminAnalyticsController {
     @SecurityRequirement(name = "Access")
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/salesAnalytics")
-    public ResponseEntity<List<ResponseAnalyticsDto.SalesDto>> get(@ModelAttribute RequestAnalyticsDto.salesDto salesDto){ //@ModelAttribute ->Setter로 받아야함 쿼리파미터를 DTO 객체에 자동 매핑 됨.
+    public ResponseEntity<List<ResponseAnalyticsDto.SalesDto>> get(@ModelAttribute RequestAnalyticsDto.salesDto salesDto) { //@ModelAttribute ->Setter로 받아야함 쿼리파미터를 DTO 객체에 자동 매핑 됨.
         System.out.println(salesDto.getPeriod() + " " + salesDto.getFrom() + " " + salesDto.getTo());
         List<ResponseAnalyticsDto.SalesDto> listSalesDto = adminAnalyticsService.getSalesAnalyticsData(salesDto);
         return ResponseEntity.ok(listSalesDto);
     }
 
 
+    @Operation(
+            summary = "ADMIN 관리하는 매장 메뉴 판매 현황 조회 (인기 메뉴 TOP N, 카테고리별 매출/판매량)"
+    )
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/menu-sales-analytics")
+    public ResponseEntity<List<ResponseAnalyticsDto.SalesMenuDto>> getMenuSalesAnalytics(
+            @ModelAttribute RequestAnalyticsDto.SalesTop5Dto top5Dto) {
+        List<ResponseAnalyticsDto.SalesMenuDto> result = adminAnalyticsService.getMenuSalesAnalytics(top5Dto);
+        return ResponseEntity.ok(result);
+    }
 }
