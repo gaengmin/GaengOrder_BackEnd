@@ -1,5 +1,6 @@
 package tableOrder.menu.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,10 @@ public class MenuController {
 
 
     /**고객일 때 더보기 화면으로 나올 수 있게 하는 */
+    @Operation(
+            summary = "고객 메뉴 더보기(검색 포함)",
+            description = "매장 번호와(필수), 검색어(옵션), offset, size를 받아 해당 매장의 메뉴를 더보기/로드 형태로 조회합니다. hasNext=true면 더 가져올 것이 있는 것.keyword 파라미터로 이름 검색 가능"
+    )
     @GetMapping("/menus/client/search/{storedNo}")
     public  ResponseEntity<Map<String, Object>> getSearchMenuData(
             @PathVariable Long storedNo,
@@ -55,6 +60,11 @@ public class MenuController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(
+            summary = "메뉴 상세 조회",
+            description = "메뉴 ID로 상세 정보를 조회합니다."
+    )
+
     @GetMapping("/menus/{menuId}")
     ResponseEntity<ResponseMenuDto.ResponseMenuDetailDto> getMenuDataDetails(@PathVariable Long menuId) {
         ResponseMenuDto.ResponseMenuDetailDto menuDetailDto = menuService.getMenuDataDetails(menuId);
@@ -62,6 +72,10 @@ public class MenuController {
         return ResponseEntity.ok(menuDetailDto);
     }
 
+    @Operation(
+            summary = "메뉴 등록",
+            description = "관리자 권한으로 메뉴를 등록합니다."
+    )
     @PostMapping("/menus")
     @PreAuthorize("hasAuthority('ADMIN')")
     @SecurityRequirement(name = "Access")
@@ -74,6 +88,10 @@ public class MenuController {
     /**
      * 메뉴 판매 여부 수정
      */
+    @Operation(
+            summary = "메뉴 판매 여부 수정",
+            description = "메뉴 번호를 받아 판매/중지 여부를 토글합니다. ADMIN/ORDERS 권한 필요"
+    )
     @PatchMapping("/menus/{menuNo}/availability")
     @PreAuthorize("hasAnyAuthority('ADMIN','ORDERS')")
     @SecurityRequirement(name = "Access")
@@ -87,6 +105,10 @@ public class MenuController {
     /**
      * 메뉴 순서 변경
      */
+    @Operation(
+            summary = "메뉴 순서 변경",
+            description = "관리자가 메뉴의 진열 순서를 변경합니다. Body에 메뉴ID(Long) 리스트를 새로운 순서로 전달"
+    )
     @PatchMapping("/menus/reposition")
     @PreAuthorize("hasAuthority('ADMIN')")
     @SecurityRequirement(name = "Access")
@@ -106,6 +128,10 @@ public class MenuController {
     /**
      * 메뉴 데이터 수정 - if 가격이라든가? 메뉴명이라든가?
      */
+    @Operation(
+            summary = "메뉴 정보 수정",
+            description = "관리자가 메뉴명, 가격, 카테고리 등 메뉴 상세 정보를 수정합니다."
+    )
     @PatchMapping("/menus/{menuNo}")
     @PreAuthorize("hasAuthority('ADMIN')")
     @SecurityRequirement(name = "Access")
@@ -121,6 +147,10 @@ public class MenuController {
      * 메뉴 번호가 들어오면 그 번호 이외의 번호
      * 메뉴 삭제시 판매삭제한 날짜까지 기록
      */
+    @Operation(
+            summary = "메뉴 소프트 삭제",
+            description = "관리자가 메뉴를 판매에서 제외(소프트딜리트)합니다."
+    )
     @PatchMapping("/menus/{menuNo}/softDelete")
     @PreAuthorize("hasAuthority('ADMIN')")
     @SecurityRequirement(name = "Access")
