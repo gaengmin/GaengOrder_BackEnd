@@ -34,4 +34,4 @@ out/
 /.nb-gradle/
 
 # Spring Boot configuration
-application*.yml
+src/main/resources/application*.yml
