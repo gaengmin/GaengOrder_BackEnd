@@ -45,15 +45,10 @@ public class UserService extends AbstractAuthValidator {
         existValidateUserId(adminJoinDto.getUserId());
         //아이디 중복 검사
 
-        Long storeNo = null;
-
-        try {
-            storeNo = storesMapper.findByStoreNo(adminJoinDto.getBusinessNo());
-            if (storeNo == null) {
-                throw new IllegalArgumentException("해당 사업자번호에 해당하는 매장이 존재하지 않습니다.");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("매장 정보 조회 중 오류가 발생했습니다.", e);
+        Long storeNo = storesMapper.findByStoreNo(adminJoinDto.getBusinessNo());
+        System.out.println(storeNo + " 매장번호");
+        if (storeNo == null) {
+            throw new IllegalArgumentException("해당 사업자번호에 해당하는 매장이 존재하지 않습니다.");
         }
 
         //매장별 ADMIN 계정 유일성 검사(사업자 번호에 따른 아이디가 하나인가?)
@@ -65,22 +60,15 @@ public class UserService extends AbstractAuthValidator {
         String encodedPwd = passwordEncoder.encode(adminJoinDto.getPwd());
 
         //엔티티 생성 및 저장
-        Users user = Users.builder()
-                .userId(adminJoinDto.getUserId())
-                .pwd(encodedPwd)
-                .name(adminJoinDto.getName())
-                .phoneNumber(adminJoinDto.getPhoneNumber())
-                .storeNo(storeNo)
-                .softDelete(SoftDelete.N)
-                .role(Role.ADMIN)
-                .build();
+        Users user = Users.createAdminUser(adminJoinDto, encodedPwd, storeNo);
+
 
         userRepository.save(user);
     }
 
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    public void joinAdminUsers(RequestUsersDto.@Valid requestOrdersJoinDto ordersJoinDto) {
+    public void joinAdminUsers(RequestUsersDto.requestOrdersJoinDto ordersJoinDto) {
         Long userStoreNo = SecurityUtil.getCurrentUsersStoreNo();
         String userId = SecurityUtil.getCurrentUserId();
 
@@ -92,16 +80,8 @@ public class UserService extends AbstractAuthValidator {
 
         String encodedPwd = passwordEncoder.encode(ordersJoinDto.getPwd());
 
-        //엔티티 생성 및 저장
-        Users user = Users.builder()
-                .userId(ordersJoinDto.getUserId())
-                .pwd(encodedPwd)
-                .name(ordersJoinDto.getName())
-                .phoneNumber(ordersJoinDto.getPhoneNumber())
-                .storeNo(userStoreNo)
-                .softDelete(SoftDelete.N)
-                .role(Role.ORDERS)
-                .build();
+        Users user = Users.createOrdersUser(ordersJoinDto, encodedPwd, userStoreNo);
+
 
         userRepository.save(user);
 
@@ -172,7 +152,7 @@ public class UserService extends AbstractAuthValidator {
         if (!SecurityUtil.getCurrentUserRole().contains("SUPERADMIN")) {
             verifyStoreOwner(userStoreNo, userId, "정보 조회");
         }
-        ResponseUsersDto.UsersDto usersDto = usersMapper.getUserData(userId,userStoreNo);
+        ResponseUsersDto.UsersDto usersDto = usersMapper.getUserData(userId, userStoreNo);
         return ResponseUsersDto.UsersData.from(usersDto);
     }
 }

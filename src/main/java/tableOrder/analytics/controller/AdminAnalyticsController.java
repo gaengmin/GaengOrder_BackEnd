@@ -36,15 +36,15 @@ public class AdminAnalyticsController {
         return ResponseEntity.ok(listSalesDto);
     }
 
-
-    @Operation(
-            summary = "ADMIN 관리하는 매장 메뉴 판매 현황 조회 (인기 메뉴 TOP N, 카테고리별 매출/판매량)"
-    )
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/menu-sales-analytics")
-    public ResponseEntity<List<ResponseAnalyticsDto.SalesMenuDto>> getMenuSalesAnalytics(
-            @ModelAttribute RequestAnalyticsDto.SalesTop5Dto top5Dto) {
-        List<ResponseAnalyticsDto.SalesMenuDto> result = adminAnalyticsService.getMenuSalesAnalytics(top5Dto);
-        return ResponseEntity.ok(result);
-    }
+//
+//    @Operation(
+//            summary = "ADMIN 관리하는 매장 메뉴 판매 현황 조회 (인기 메뉴 TOP N, 카테고리별 매출/판매량)"
+//    )
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    @GetMapping("/menu-sales-analytics")
+//    public ResponseEntity<List<ResponseAnalyticsDto.SalesMenuDto>> getMenuSalesAnalytics(
+//            @ModelAttribute RequestAnalyticsDto.SalesTop5Dto top5Dto) {
+//        List<ResponseAnalyticsDto.SalesMenuDto> result = adminAnalyticsService.getMenuSalesAnalytics(top5Dto);
+//        return ResponseEntity.ok(result);
+//    }
 }

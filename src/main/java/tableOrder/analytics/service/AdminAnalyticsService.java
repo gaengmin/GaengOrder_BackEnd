@@ -28,21 +28,20 @@ public class AdminAnalyticsService extends AbstractAuthValidator {
         this.ordersItemsMapper = ordersItemsMapper;
     }
 
-
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public List<ResponseAnalyticsDto.SalesMenuDto> getMenuSalesAnalytics(RequestAnalyticsDto.SalesTop5Dto top5Dto) {
-        Long userStoreNo = SecurityUtil.getCurrentUsersStoreNo();
-        String userId = SecurityUtil.getCurrentUserId();
-
-        //공통으로 권한 체크
-        verifyStoreOwner(userStoreNo, userId, "관리자 페이지 기능");
-
-        List<ResponseAnalyticsDto.SalesMenuDto> salesMenuData;
-
-        salesMenuData = ordersItemsMapper.rank();
-
-        return salesMenuData;
-    }
+//    @PreAuthorize("hasAuthority('ADMIN')")
+//    public List<ResponseAnalyticsDto.SalesMenuDto> getMenuSalesAnalytics(RequestAnalyticsDto.SalesTop5Dto top5Dto) {
+//        Long userStoreNo = SecurityUtil.getCurrentUsersStoreNo();
+//        String userId = SecurityUtil.getCurrentUserId();
+//
+//        //공통으로 권한 체크
+//        verifyStoreOwner(userStoreNo, userId, "관리자 페이지 기능");
+//
+//        List<ResponseAnalyticsDto.SalesMenuDto> salesMenuData;
+//
+//        salesMenuData = ordersItemsMapper.rank();
+//
+//        return salesMenuData;
+//    }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     public List<ResponseAnalyticsDto.SalesDto> getSalesAnalyticsData(RequestAnalyticsDto.salesDto salesDto) {

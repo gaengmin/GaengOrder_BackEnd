@@ -80,7 +80,7 @@
 
     <update id="updateMenuForEachOrder">
         <foreach collection="positions" item="item" separator=";">
-            UPDATE MENU
+            UPDATE menu
             SET position = #{item.position}
             WHERE menu_no = #{item.menuNo}
         </foreach>
@@ -90,7 +90,7 @@
 
     <!-- FUNCTION : 상태 변화 쿼리-->
     <update id="updateMenuStatus" parameterType="long">
-        UPDATE MENU
+        UPDATE menu
         set menu_status =
                 CASE
                     WHEN menu_status = 'Y' THEN 'N'
@@ -101,7 +101,7 @@
     </update>
 
     <update id="updateMenuData" parameterType="map">
-        UPDATE MENU
+        UPDATE menu
         <set>
             <if test="dto.menuName != null">, menu_name = #{dto.menuName}</if>
             <if test="dto.menuPrice != null">, menu_price = #{dto.menuPrice}</if>

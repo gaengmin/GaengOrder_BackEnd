@@ -29,6 +29,7 @@ public class Stores {
     @Column(length = 200)
     private String storeAddress;
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(1)")
     private SoftDelete softDelete;
 
     @CreatedDate

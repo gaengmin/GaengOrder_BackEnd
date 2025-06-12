@@ -38,6 +38,7 @@ public class TablesController {
     )
     @PostMapping("/tables")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @SecurityRequirement(name = "Access")
     public ResponseEntity<?> addStoreTables(@RequestBody @Validated RequestTablesDto.addStoreTableDto addStoreTableDto){
         tablesService.addStoreTables(addStoreTableDto);
 
@@ -50,6 +51,7 @@ public class TablesController {
     )
     @PatchMapping("/tables/{tableNo}")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @SecurityRequirement(name = "Access")
     public ResponseEntity<?> modifyStoreTables(@PathVariable Long tableNo, @RequestParam @NotBlank String tableCode){
         tablesService.modifyStoreTables(tableNo, tableCode);
 
@@ -63,6 +65,7 @@ public class TablesController {
     )
     @PatchMapping("/tables/softDelete/{tableNo}")
     @PreAuthorize("hasAuthority('ADMIN')")
+    @SecurityRequirement(name = "Access")
     public ResponseEntity<?> modifyStoreTables(@PathVariable Long tableNo){
         tablesService.softDeleteStoreTables(tableNo);
 

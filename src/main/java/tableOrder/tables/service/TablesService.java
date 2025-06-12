@@ -66,6 +66,8 @@ public class TablesService extends AbstractAuthValidator {
         Long userStoreNo = SecurityUtil.getCurrentUsersStoreNo();
         String userId = SecurityUtil.getCurrentUserId();
 
+        System.out.println(userStoreNo + ' ' + userId);
+
         verifyStoreOwner(userStoreNo, userId, "매장 내 테이블 번호를 저장");
 
         validateTableCodeDuplicate(addStoreTableDto.getTableCode(), addStoreTableDto.getStoreNo(), SoftDelete.N, null);

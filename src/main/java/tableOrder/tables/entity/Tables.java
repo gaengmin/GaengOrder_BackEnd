@@ -31,7 +31,7 @@ public class Tables {
     @Column(name="table_code")
     private String tableCode;
     @Enumerated(EnumType.STRING)
-    @Column(name="soft_delete")
+    @Column(name="soft_delete", columnDefinition = "char(1)")
     private SoftDelete softDelete = SoftDelete.N;
     @CreatedDate
     @Column(name="create_dt", updatable = false)

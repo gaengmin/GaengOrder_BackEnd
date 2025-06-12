@@ -41,6 +41,7 @@ public class StoresService extends AbstractAuthValidator {
      * 트랜잭션이 롤백됩니다.
      */
     @Transactional
+    @PreAuthorize("hasAuthority('SUPERADMIN')")
     public void insertStores(RequestStoresDto.RequestInsertDto requestInsertDto) {
         int cnt = storesMapper.confirmStores(requestInsertDto.getBusinessNo());
         log.info(cnt + " : " + "사업자 갯수");

@@ -1,6 +1,7 @@
 package tableOrder.auth.filter;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.security.auth.message.AuthException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -73,7 +74,21 @@ public class JWTFilter extends OncePerRequestFilter {
         // 5. 토큰에서 userId, role 추출
         String userId = jwtUtil.getUserId(accessToken);
         Role role = Role.valueOf(jwtUtil.getRole(accessToken));
-        Long storeNo = Long.valueOf(jwtUtil.getStoredNo(accessToken));
+        Long storeNo;
+
+        if (role == Role.SUPERADMIN) {
+            /**SUPERADMIN은 매장 번호가 없음*/
+            storeNo = -1L;
+        } else if (role == Role.ADMIN || role == Role.ORDERS) {
+            storeNo = Long.valueOf(jwtUtil.getStoredNo(accessToken));
+
+            if (storeNo == null) {
+                throw new IllegalArgumentException("일반 사용자인데 매장번호 없음");
+            }
+        } else {
+            throw new IllegalArgumentException("예외 발생");
+        }
+
 
         // 6. 사용자 정보로 UserDetails 및 Authentication 객체 생성
         Users users = Users.builder()

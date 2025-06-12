@@ -47,9 +47,9 @@ public class RequestUsersDto {
                 message = "올바른 휴대폰 번호 형식(010-1234-5678, 01012345678 등)이어야 합니다."
         )
         private String phoneNumber;
+        private Role role;
         @NotBlank
         private String businessNo; //사업자 번호
-        private Role role;
     }
 
     @Getter

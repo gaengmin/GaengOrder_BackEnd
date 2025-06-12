@@ -86,7 +86,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/categories/**").hasAuthority("ADMIN") // 그 외 메서드는 ADMIN
                         .requestMatchers(HttpMethod.GET, "/api/menus/**").permitAll() // GET은 모든 사용자 허용
                         .requestMatchers("/api/menus/**").hasAnyAuthority("ADMIN", "ORDERS")
-                        .requestMatchers(HttpMethod.POST,"/api/tables").hasAnyAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST,"/api/tables").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/tables/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/tables/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"api/ordersItem/{orderNo}/cancel").hasAuthority("ORDERS")

@@ -6,7 +6,7 @@ import tableOrder.category.dto.request.RequestCategoryDto;
 @Mapper
 public interface CategoriesMapper {
     //카테고리 존재 수
-    @Select("SELECT COUNT(*) FROM CATEGORIES where store_no = #{storeNo}")
+    @Select("SELECT COUNT(*) FROM categories where store_no = #{storeNo}")
     int getCategoriesCnt(@Param("storeNo") Long storeNo);
 
 
@@ -26,11 +26,11 @@ public interface CategoriesMapper {
                         @Param("position") int position);
 
     //카테고리 소프트 삭제
-    @Update("UPDATE CATEGORIES SET soft_delete = 'Y' Where categories_no = #{value}")
+    @Update("UPDATE categories SET soft_delete = 'Y' Where categories_no = #{value}")
     void softDeleteCategoriesByNo(Long id);
 
     //카테고리 명 변경
-    @Update("UPDATE CATEGORIES SET name = #{name} WHERE categories_no = #{categoriesNo}")
+    @Update("UPDATE categories SET name = #{name} WHERE categories_no = #{categoriesNo}")
     Integer changeCategoriesName(@Param("categoriesNo") Long categoriesNo, @Param("name") String name);
 
     // 카테고리 존재 여부 확인 (1:존재, 0:없음)
@@ -38,7 +38,7 @@ public interface CategoriesMapper {
     Integer existsByCategoryNo(@Param("categoryNo") Long categoryNo);
 
     // 카테고리 존재 여부 확인(1: 존재, 0: 없음)
-    @Select("SELECT COUNT(*) FROM CATEGORIES WHERE store_no = #{storeNo} AND name = #{name} AND soft_delete = 'N'")
+    @Select("SELECT COUNT(*) FROM categories WHERE store_no = #{storeNo} AND name = #{name} AND soft_delete = 'N'")
     int countByStoreNoAndName(@Param("storeNo") Long storeNo, @Param("name") String name);
 
     // 카테고리 순서

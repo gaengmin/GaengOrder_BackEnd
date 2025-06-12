@@ -5,13 +5,13 @@
 <mapper namespace="tableOrder.stores.mapper.StoresMapper">
     <select id="confirmStores" parameterType="String" resultType="int">
         SELECT COUNT(*)
-        FROM STORES
+        FROM stores
         WHERE business_no = #{businessNo}
     </select>
 
     <insert id="insertStores" parameterType="tableOrder.stores.dto.RequestDto.RequestStoresDto$RequestInsertDto">
-        insert into stores (business_no, store_name, store_tel)
-               values (#{businessNo}, #{storeName}, #{storeTel})
+        insert into stores (business_no, store_name, store_address,store_tel)
+               values (#{businessNo}, #{storeName}, #{storeAddress},#{storeTel})
     </insert>
 
 <!--    <update id="softDeleteStores" parameterType="tableOrder.stores.dto.RequestDto.RequestStoresDto$RequestStoreDto">-->

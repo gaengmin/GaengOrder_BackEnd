@@ -34,7 +34,7 @@
                ot.quantity,
                (ot.menu_price * ot.quantity)      AS menuLineTotal,
                ot.is_canceled
-        FROM Orders o
+        FROM orders o
                  INNER JOIN tables t ON o.table_no = t.table_no
                  INNER JOIN stores s ON o.store_no = s.store_no
                  INNER JOIN orders_items ot ON ot.orders_no = o.orders_no

@@ -114,12 +114,13 @@ public class UserController {
                     @ApiResponse(responseCode = "400", description = "유효성 검사 실패 등")
             }
     )
-    @PostMapping("/admin/join")
+    @PostMapping("/superAdmin/join")
     @PreAuthorize("hasAuthority('SUPERADMIN')")
     @SecurityRequirement(name = "Access")
     public ResponseEntity<?> joinSuperAdminUsers(@RequestBody @Valid RequestUsersDto.requestAdminJoinDto adminJoinDto) {
 
         log.info(adminJoinDto.getUserId());
+        log.info(adminJoinDto.getBusinessNo());
         userService.joinSuperAdminUsers(adminJoinDto);
 
         return ResponseEntity.ok("ADMIN 계정 - 회원가입 성공");
@@ -135,7 +136,7 @@ public class UserController {
                     @ApiResponse(responseCode = "400", description = "유효성 검사 실패 등")
             }
     )
-    @PostMapping("/employee/join")
+    @PostMapping("/orders/join")
     @PreAuthorize("hasAuthority('ADMIN')")
     @SecurityRequirement(name = "Access")
     public ResponseEntity<?> joinAdminUsers(@RequestBody @Valid RequestUsersDto.requestOrdersJoinDto ordersJoinDto) {

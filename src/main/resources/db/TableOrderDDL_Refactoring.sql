@@ -11,7 +11,7 @@ CREATE TABLE `stores` (
                           `update_dt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                           PRIMARY KEY (`store_no`),
                           UNIQUE KEY `business_no` (`business_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 -- 2. categories
 DROP TABLE IF EXISTS `categories`;
@@ -27,7 +27,7 @@ CREATE TABLE `categories` (
                               PRIMARY KEY (`categories_no`),
                               KEY `store_no` (`store_no`),
                               CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`store_no`) REFERENCES `stores` (`store_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 -- 3. menu
 DROP TABLE IF EXISTS `menu`;
@@ -46,7 +46,7 @@ CREATE TABLE `menu` (
                         PRIMARY KEY (`menu_no`),
                         KEY `categories_no` (`categories_no`),
                         CONSTRAINT `menu_ibfk_1` FOREIGN KEY (`categories_no`) REFERENCES `categories` (`categories_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 -- 4. tables
 DROP TABLE IF EXISTS `tables`;
@@ -62,7 +62,7 @@ CREATE TABLE `tables` (
                           UNIQUE KEY `table_code` (`table_code`),
                           KEY `store_no` (`store_no`),
                           CONSTRAINT `tables_ibfk_1` FOREIGN KEY (`store_no`) REFERENCES `stores` (`store_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 -- 5. users
 DROP TABLE IF EXISTS `users`;
@@ -82,7 +82,7 @@ CREATE TABLE `users` (
                          UNIQUE KEY `user_id` (`user_id`),
                          KEY `store_no` (`store_no`),
                          CONSTRAINT `users_ibfk_1` FOREIGN KEY (`store_no`) REFERENCES `stores` (`store_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 -- 6. orders
 DROP TABLE IF EXISTS `orders`;
@@ -103,7 +103,7 @@ CREATE TABLE `orders` (
                           KEY `fk_orders_store` (`store_no`),
                           CONSTRAINT `fk_orders_store` FOREIGN KEY (`store_no`) REFERENCES `stores` (`store_no`),
                           CONSTRAINT `fk_orders_table` FOREIGN KEY (`table_no`) REFERENCES `tables` (`table_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 -- 7. orders_items
 DROP TABLE IF EXISTS `orders_items`;
@@ -128,7 +128,7 @@ CREATE TABLE `orders_items` (
                                 KEY `orders_items_ibfk_1` (`orders_no`),
                                 CONSTRAINT `orders_items_ibfk_1` FOREIGN KEY (`orders_no`) REFERENCES `orders` (`orders_no`),
                                 CONSTRAINT `orders_items_ibfk_2` FOREIGN KEY (`menu_no`) REFERENCES `menu` (`menu_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 -- 8. orders_status_log
 DROP TABLE IF EXISTS `orders_status_log`;
@@ -145,7 +145,7 @@ CREATE TABLE `orders_status_log` (
                                      KEY `fk_orders_status_log_user` (`user_no`),
                                      CONSTRAINT `fk_orders_status_log_order` FOREIGN KEY (`order_no`) REFERENCES `orders` (`orders_no`),
                                      CONSTRAINT `fk_orders_status_log_user` FOREIGN KEY (`user_no`) REFERENCES `users` (`user_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 -- 9. refresh_tokens
 DROP TABLE IF EXISTS `refresh_tokens`;
@@ -159,4 +159,4 @@ CREATE TABLE `refresh_tokens` (
                                   PRIMARY KEY (`refresh_no`),
                                   KEY `user_no` (`user_no`),
                                   CONSTRAINT `refresh_tokens_ibfk_1` FOREIGN KEY (`user_no`) REFERENCES `users` (`user_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);

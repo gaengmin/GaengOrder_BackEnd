@@ -62,7 +62,7 @@ public class CategoriesService extends AbstractAuthValidator {
      * @param updateCategory 변경할 이름 정보를 담은 DTO
      * @throws IllegalArgumentException 해당 카테고리가 존재하지 않거나, 이름 변경이 실패한 경우
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void changeCategoriesName(Long categoriesNo, RequestCategoryDto.UpdateCategory updateCategory) {
         // 1. 현재 로그인한 사용자의 매장 번호와 권한 추출
         Long userStoreNo = SecurityUtil.getCurrentUsersStoreNo();
@@ -99,7 +99,7 @@ public class CategoriesService extends AbstractAuthValidator {
      * - 트랜잭션 처리로 데이터 일관성 보장
      * */
     @Transactional
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void softDeleteCategory(Long categoriesNo, RequestCategoryDto.SoftDeleteCategory softDeleteCategory) {
         Long userStoreNo = SecurityUtil.getCurrentUsersStoreNo();
         String userId = SecurityUtil.getCurrentUserId();
