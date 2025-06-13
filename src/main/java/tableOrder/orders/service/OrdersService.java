@@ -48,7 +48,7 @@ public class OrdersService extends AbstractAuthValidator {
         //주문검증
         ordersValidateMethod.validateOrderExists(orderNo);
         //주문 상태 문자열 조회
-        String statusStr = ordersValidateMethod.getOrderStatusString(orderNo).getStatus();
+        String statusStr = ordersValidateMethod.getOrderStatusString(orderNo).getOrderStatus();
         //주문 상태 문자열 → Enum 변환
         OrdersStatusEnum currentOrderStatus = ordersValidateMethod.parseOrderStatus(statusStr);
 
@@ -61,6 +61,7 @@ public class OrdersService extends AbstractAuthValidator {
 
     }
 
+    //주문 상태 변화
     @Transactional
     @PreAuthorize("hasAuthority('ORDERS')")
     public void updateStatus(Long orderNo) {
@@ -76,14 +77,14 @@ public class OrdersService extends AbstractAuthValidator {
         ResponseOrdersDto.OrderStatusWithUpdateAtDto orderStatusWithUpdateAtDto = ordersValidateMethod.getOrderStatusString(orderNo);
 
         //주문 상태 문자열 → Enum 변환
-        OrdersStatusEnum currentOrderStatus = ordersValidateMethod.parseOrderStatus(orderStatusWithUpdateAtDto.getStatus());
+        OrdersStatusEnum currentOrderStatus = ordersValidateMethod.parseOrderStatus(orderStatusWithUpdateAtDto.getOrderStatus());
 
         //취소 상태 검증
         ordersValidateMethod.validateNotCancelled(currentOrderStatus, orderNo);
 
         OrdersStatusEnum nextStatus = currentOrderStatus.next();
 
-        LocalDateTime beforeUpdateDt = orderStatusWithUpdateAtDto.getUpdateAt();
+        LocalDateTime beforeUpdateDt = orderStatusWithUpdateAtDto.getUpdateDt();
         int count = ordersMapper.updateOrdersStatus(nextStatus.name(), orderNo, beforeUpdateDt);
 
         if (count == 0) {
@@ -117,11 +118,12 @@ public class OrdersService extends AbstractAuthValidator {
         for (RequestOrdersDto.OrderItemDto item : createOrderDto.getOrderItems()) {
             totalPrice += item.getMenuPrice() * item.getQuantity();
         }
-        RequestOrdersDto.CreateOrderDtoWithTotalPrice orderWithTotalPriceDto = RequestOrdersDto.CreateOrderDtoWithTotalPrice.of(
-                createOrderDto.getTableNo(),
-                createOrderDto.getStoreNo(),
-                totalPrice
-        );
+        RequestOrdersDto.CreateOrderDtoWithTotalPrice orderWithTotalPriceDto =
+                RequestOrdersDto.CreateOrderDtoWithTotalPrice.of(
+                        createOrderDto.getTableNo(),
+                        createOrderDto.getStoreNo(),
+                        totalPrice
+                );
 
         // 주문 데이터 저장
         ordersMapper.saveOrders(orderWithTotalPriceDto);

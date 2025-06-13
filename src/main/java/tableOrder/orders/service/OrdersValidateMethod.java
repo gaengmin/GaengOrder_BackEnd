@@ -34,8 +34,8 @@ public class OrdersValidateMethod {
     //주문 상태 문자열 조회
     ResponseOrdersDto.OrderStatusWithUpdateAtDto getOrderStatusString(Long orderNo) {
         ResponseOrdersDto.OrderStatusWithUpdateAtDto orderStatusWithUpdateAtDto = ordersMapper.getOrderStatusWithUpdateAt(orderNo);
-        if (orderStatusWithUpdateAtDto == null || orderStatusWithUpdateAtDto.getStatus() == null) {
-            throw new IllegalStateException("주문 상태 정보가 없습니다. 주문번호: " + orderNo);
+        if (orderStatusWithUpdateAtDto == null || orderStatusWithUpdateAtDto.getOrderStatus() == null) {
+            throw new IllegalArgumentException("주문 상태 정보가 없습니다. 주문번호: " + orderNo);
         }
         return orderStatusWithUpdateAtDto;
     }

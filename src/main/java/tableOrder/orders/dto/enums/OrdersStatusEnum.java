@@ -34,6 +34,8 @@ public enum OrdersStatusEnum {
                 return DIRTY;
             case CANCELLED:
                 return CANCELLED;
+            case DIRTY:
+                return CLEAN;
             case CLEAN:
                 throw new IllegalStateException("새로운 주문을 받아야하는 테이블입니다." + this);
             default:

@@ -42,7 +42,7 @@ public interface OrdersMapper {
                 SET order_status = #{nextStatus},
                     update_dt = NOW()
               WHERE orders_no = #{orderNo}
-                AND update_dt = #{beforeUpdatedt}
+                AND update_dt = #{beforeUpdateDt}
             """)
     int updateOrdersStatus(@Param("nextStatus") String nextStatus, @Param("orderNo") Long orderNo, @Param("beforeUpdateDt") LocalDateTime beforeUpdateDt);
 
