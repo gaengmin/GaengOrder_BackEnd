@@ -1,14 +1,12 @@
 package tableOrder.orders.mapper;
 
-import jakarta.validation.constraints.NotNull;
 import org.apache.ibatis.annotations.*;
 import tableOrder.analytics.dto.response.ResponseAnalyticsDto;
-import tableOrder.orders.dto.enums.OrdersStatusEnum;
 import tableOrder.orders.dto.request.RequestOrdersDto;
-import tableOrder.orders.dto.request.RequestOrdersDto.CreateOrderDtoWithTotalPrice;
 import tableOrder.orders.dto.response.ResponseOrdersDto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Mapper
@@ -20,6 +18,9 @@ public interface OrdersMapper {
     //주문 상태 조히
     @Select("select order_status from orders where orders_no = #{orderNo}")
     String getOrderStatusByOrderNo(@Param("orderNo") Long orderNo);
+
+    @Select("SELECT order_status, update_dt FROM orders WHERE orders_no = #{orderNo}")
+    ResponseOrdersDto.OrderStatusWithUpdateAtDto getOrderStatusWithUpdateAt(Long orderNo);
 
     //주문 존재여부
     @Select("select count(*) from orders where orders_no = #{orderNo}")
@@ -36,12 +37,17 @@ public interface OrdersMapper {
     String checkOrdersStatusByTableNo(@Param("tableNo") Long tableNo);
 
     //ORDERS 권한을 가지고 사용자가 수정함.
-    @Update("update orders " +
-            "set order_status = #{nextStatus}" +
-            "where orders_no = #{orderNo}")
-    void updateOrdersStatus(@Param("nextStatus") String nextStatus, @Param("orderNo") Long orderNo);
+    @Update("""
+            UPDATE orders
+                SET order_status = #{nextStatus},
+                    update_dt = NOW()
+              WHERE orders_no = #{orderNo}
+                AND update_dt = #{beforeUpdatedt}
+            """)
+    int updateOrdersStatus(@Param("nextStatus") String nextStatus, @Param("orderNo") Long orderNo, @Param("beforeUpdateDt") LocalDateTime beforeUpdateDt);
 
-    //ORDERS 권한을 가지고 사용자가 삭제함. 젠체 취소시 상태뿐 아닌 금액도 0원 처리
+
+    //ORDERS 권한을 가지고 사용자가 삭제함. 전체 취소시 상태뿐 아닌 금액도 0원 처리
     @Update("""
             UPDATE orders
             SET
@@ -56,6 +62,7 @@ public interface OrdersMapper {
             @Param("orderNo") Long orderNo,
             @Param("cancelReason") String cancelReason
     );
+
     @Select("SELECT additional_order as additionalOrder, total_price as totalPrice, order_status as orderStatus FROM ORDERS " +
             "WHERE ORDERS_NO = #{orderNo}")
     ResponseOrdersDto.AdditionalNeedData getTotalPriceByOrdersNo(@Param("orderNo") Long orderNo);
@@ -85,16 +92,16 @@ public interface OrdersMapper {
     );
 
     //주문데이터 조회
-    ResponseOrdersDto.ReceiptDto getReceiptData(@Param("ordersNo") Long ordersNo,@Param("storeNo") Long storeNo);
+    ResponseOrdersDto.ReceiptDto getReceiptData(@Param("ordersNo") Long ordersNo, @Param("storeNo") Long storeNo);
 
     ResponseOrdersDto.OrderDetailDto getOrdersDetailsData(Long ordersNo);
 
     /*일간 데이터*/
-    List<ResponseAnalyticsDto.SalesDto> getDailyData(@Param("to")LocalDate to,@Param("from") LocalDate from, @Param("storeNo") Long storedNo);
+    List<ResponseAnalyticsDto.SalesDto> getDailyData(@Param("to") LocalDate to, @Param("from") LocalDate from, @Param("storeNo") Long storedNo);
 
     /*주간 데이터*/
-    List<ResponseAnalyticsDto.SalesDto> getWeeklyData(@Param("weekStart")LocalDate weekStart, @Param("weekEnd")LocalDate weekEnd, @Param("storeNo") Long storedNo);
+    List<ResponseAnalyticsDto.SalesDto> getWeeklyData(@Param("weekStart") LocalDate weekStart, @Param("weekEnd") LocalDate weekEnd, @Param("storeNo") Long storedNo);
 
     /*월간 데이터*/
-    List<ResponseAnalyticsDto.SalesDto> getMonthlyData(@Param("baseMonth")LocalDate baseMonth, @Param("startMonth")LocalDate startMonth, @Param("storeNo") Long storedNo);
+    List<ResponseAnalyticsDto.SalesDto> getMonthlyData(@Param("baseMonth") LocalDate baseMonth, @Param("startMonth") LocalDate startMonth, @Param("storeNo") Long storedNo);
 }

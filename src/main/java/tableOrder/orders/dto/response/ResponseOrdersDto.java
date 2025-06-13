@@ -8,6 +8,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class ResponseOrdersDto {
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class OrderStatusWithUpdateAtDto {
+        private String status;
+        private LocalDateTime updateAt;
+    }
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor

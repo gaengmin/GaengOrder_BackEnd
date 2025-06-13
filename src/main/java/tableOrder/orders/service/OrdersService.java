@@ -15,6 +15,8 @@ import tableOrder.ordersItem.mapper.OrdersItemsMapper;
 import tableOrder.ordersStatusLog.dto.request.RequestOrdersStatusLogDto;
 import tableOrder.ordersStatusLog.mapper.OrdersStatusLogMapper;
 
+import java.time.LocalDateTime;
+
 @Service
 public class OrdersService extends AbstractAuthValidator {
 
@@ -46,7 +48,7 @@ public class OrdersService extends AbstractAuthValidator {
         //주문검증
         ordersValidateMethod.validateOrderExists(orderNo);
         //주문 상태 문자열 조회
-        String statusStr = ordersValidateMethod.getOrderStatusString(orderNo);
+        String statusStr = ordersValidateMethod.getOrderStatusString(orderNo).getStatus();
         //주문 상태 문자열 → Enum 변환
         OrdersStatusEnum currentOrderStatus = ordersValidateMethod.parseOrderStatus(statusStr);
 
@@ -71,20 +73,25 @@ public class OrdersService extends AbstractAuthValidator {
         //주문검증
         ordersValidateMethod.validateOrderExists(orderNo);
         //주문 상태 문자열 조회
-        String statusStr = ordersValidateMethod.getOrderStatusString(orderNo);
+        ResponseOrdersDto.OrderStatusWithUpdateAtDto orderStatusWithUpdateAtDto = ordersValidateMethod.getOrderStatusString(orderNo);
+
         //주문 상태 문자열 → Enum 변환
-        OrdersStatusEnum currentOrderStatus = ordersValidateMethod.parseOrderStatus(statusStr);
+        OrdersStatusEnum currentOrderStatus = ordersValidateMethod.parseOrderStatus(orderStatusWithUpdateAtDto.getStatus());
+
         //취소 상태 검증
         ordersValidateMethod.validateNotCancelled(currentOrderStatus, orderNo);
 
-        /**단계별로 바로 넘어감.*/
         OrdersStatusEnum nextStatus = currentOrderStatus.next();
 
-        ordersMapper.updateOrdersStatus(nextStatus.name(), orderNo);
+        LocalDateTime beforeUpdateDt = orderStatusWithUpdateAtDto.getUpdateAt();
+        int count = ordersMapper.updateOrdersStatus(nextStatus.name(), orderNo, beforeUpdateDt);
 
-        //Builder를 통한 저장
-        RequestOrdersStatusLogDto logDto = RequestOrdersStatusLogDto.of(orderNo, currentOrderStatus, nextStatus, userId);
-        ordersStatusLogMapper.saveLogData(logDto);
+        if (count == 0) {
+            throw new IllegalArgumentException("이미 다른 직원이 처리했습니다.");
+        } else {
+            RequestOrdersStatusLogDto logDto = RequestOrdersStatusLogDto.of(orderNo, currentOrderStatus, nextStatus, userId);
+            ordersStatusLogMapper.saveLogData(logDto);
+        }
     }
 
     /**

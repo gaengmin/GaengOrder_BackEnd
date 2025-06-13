@@ -6,6 +6,7 @@ import tableOrder.common.enums.SoftDelete;
 import tableOrder.menu.dto.response.ResponseMenuDto;
 import tableOrder.menu.mapper.MenuMapper;
 import tableOrder.orders.dto.enums.OrdersStatusEnum;
+import tableOrder.orders.dto.response.ResponseOrdersDto;
 import tableOrder.orders.mapper.OrdersMapper;
 
 @Service
@@ -31,12 +32,12 @@ public class OrdersValidateMethod {
     }
 
     //주문 상태 문자열 조회
-    String getOrderStatusString(Long orderNo) {
-        String currentStatus = ordersMapper.getOrderStatusByOrderNo(orderNo);
-        if (currentStatus == null) {
+    ResponseOrdersDto.OrderStatusWithUpdateAtDto getOrderStatusString(Long orderNo) {
+        ResponseOrdersDto.OrderStatusWithUpdateAtDto orderStatusWithUpdateAtDto = ordersMapper.getOrderStatusWithUpdateAt(orderNo);
+        if (orderStatusWithUpdateAtDto == null || orderStatusWithUpdateAtDto.getStatus() == null) {
             throw new IllegalStateException("주문 상태 정보가 없습니다. 주문번호: " + orderNo);
         }
-        return currentStatus;
+        return orderStatusWithUpdateAtDto;
     }
 
     //주문 상태 문자열 → Enum 변환
