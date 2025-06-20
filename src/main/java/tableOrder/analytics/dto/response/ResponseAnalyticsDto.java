@@ -20,9 +20,9 @@ public class ResponseAnalyticsDto {
         private String period; //기간
         private String menuName;
         private String categoryName;
-        private Integer orderCount;
+        private Long orderCount;
         private Integer freeCount;
-        private Integer amount;
+        private Long amount;
         private Integer rank;
     }
 
@@ -33,9 +33,9 @@ public class ResponseAnalyticsDto {
     public static class SalesDto{
         private String period;
         private Integer orderCount;
-        private Integer totalPrice;
-        private Integer discountPrice;
-        private Integer finalPrice;
+        private Long totalPrice;
+        private Long discountPrice;
+        private Long finalPrice;
     }
 
 
