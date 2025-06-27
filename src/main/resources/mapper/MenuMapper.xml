@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="tableOrder.menu.mapper.MenuMapper">
+    <!--문제해결 방법 : resultMap과 Inner Class DTO 일 때 하위 클래스 선택시 $ 표시 안해서 에러 뜸.-->
+    <resultMap id="categoryMenuResultMap" type="tableOrder.category.dto.response.ResponseCategoryDto$ResponseListMenuDto">
+        <id property="menuNo" column="menu_no"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="menuName" column="menu_name"/>
+        <result property="menuPrice" column="menu_price"/>
+        <result property="menuStatus" column="menu_status"/>
+    </resultMap>
+
+    <select id = "existMenuByNo"
+            resultType="tableOrder.menu.dto.response.ResponseMenuDto$MenuValidateDto">
+        SELECT
+            menu_no as menuNo,
+            menu_status as menuStatus,
+            soft_delete as softDelete
+        FROM
+            menu
+        WHERE menu_no = #{menuNo}
+    </select>
+
+
+    <select id="searchMenusForLoadMore" resultType="tableOrder.menu.dto.response.ResponseMenuDto$ResponseMenuDataDto">
+        SELECT
+            m.menu_no AS menuNo,
+            c.name AS categoryName,
+            m.menu_name AS menuName,
+            m.menu_price AS menuPrice
+        FROM menu m
+        INNER JOIN categories c ON m.categories_no = c.categories_no
+        <where>
+            m.soft_delete = 'N'
+            AND c.store_no = #{storeNo}
+            <if test="keyword != null and keyword != ''">
+                AND m.menu_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY m.menu_name
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+
+    <!-- 단일 menu정보 -->
+    <select id = "getMenuDataDetails" resultType="tableOrder.menu.dto.response.ResponseMenuDto$ResponseMenuDetailDto">
+        SELECT
+            m.menu_no As menuNo,
+            c.name AS categoryName,
+            m.menu_name as menuName,
+            m.menu_price as menuPrice,
+            m.description as menuDescription
+        FROM menu m
+                 inner join categories c
+                            on c.categories_no = m.categories_no
+        where m.menu_no = #{menuNo}
+          and m.soft_delete = 'N'
+    </select>
+
+    <select id="findMenusByCategorySorted" resultMap="categoryMenuResultMap">
+        SELECT
+            m.menu_no,
+            c.name AS category_name,
+            m.menu_name,
+            m.menu_price,
+            m.menu_Status
+        FROM menu m
+            inner join categories c
+            on c.categories_no = m.categories_no
+        where m.categories_no = #{categoriesNo}
+            and c.store_no = #{storeNo}
+            and m.soft_delete = 'N'
+        ORDER BY m.menu_status asc, m.position asc
+    </select>
+
+    <!-- 다중 메뉴 배치할 때, 쿼리
+    MyBatis의 <foreach>에서 separator=";"는 각 반복문에서 생성되는 SQL 문장 사이에 세미콜론(;)을 넣어준다는 의미-->
+
+    <update id="updateMenuForEachOrder">
+        <foreach collection="positions" item="item" separator=";">
+            UPDATE menu
+            SET position = #{item.position}
+            WHERE menu_no = #{item.menuNo}
+        </foreach>
+
+    </update>
+
+
+    <!-- FUNCTION : 상태 변화 쿼리-->
+    <update id="updateMenuStatus" parameterType="long">
+        UPDATE menu
+        set menu_status =
+                CASE
+                    WHEN menu_status = 'Y' THEN 'N'
+                    ELSE 'Y'
+                    END
+        WHERE menu_no = #{menuNo}
+          and soft_delete = 'N'
+    </update>
+
+    <update id="updateMenuData" parameterType="map">
+        UPDATE menu
+        <set>
+            <if test="dto.menuName != null">, menu_name = #{dto.menuName}</if>
+            <if test="dto.menuPrice != null">, menu_price = #{dto.menuPrice}</if>
+            <if test="dto.categoriesNo != null">, categories_no = #{dto.categoriesNo}</if>
+            <if test="dto.description != null">, description = #{dto.description}</if>
+            <if test="dto.position != null">, position = #{dto.position}</if>
+        </set>
+        WHERE menu_no = #{menuNo}
+    </update>
+
+</mapper>

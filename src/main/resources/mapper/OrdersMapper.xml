@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tableOrder.orders.mapper.OrdersMapper">
+    <resultMap id="ReceiptResultMap" type="tableOrder.orders.dto.response.ResponseOrdersDto$ReceiptDto">
+        <id property="orderNo" column="orderNo"/>
+        <result property="storeName" column="storeName"/>
+        <result property="tableCode" column="tableCode"/>
+        <result property="totalPrice" column="totalPrice"/>
+        <result property="discountPrice" column="discountPrice"/>
+        <result property="finalPrice" column="finalPrice"/>
+        <result property="orderTime" column="orderTime"/>
+        <collection property="menuList" ofType="tableOrder.orders.dto.response.ResponseOrdersDto$ReceiptDto$MenuLine">
+            <result property="menuName" column="menu_name"/>
+            <result property="menuPrice" column="menu_price"/>
+            <result property="quantity" column="quantity"/>
+            <result property="menuLineTotal" column="menuLineTotal"/>
+            <result property="isCanceled" column="is_canceled"/>
+        </collection>
+    </resultMap>
+
+    <select id="getReceiptData"
+            parameterType="map"
+            resultMap="ReceiptResultMap">
+        SELECT o.orders_no                        AS orderNo,
+               s.store_name                       AS storeName,
+               t.table_code                       AS tableCode,
+               o.total_price                      AS totalPrice,
+               o.discount_price                   AS discountPrice,
+               (o.total_price - o.discount_price) AS finalPrice,
+               o.create_dt                        AS orderTime,
+               ot.menu_name,
+               ot.menu_price,
+               ot.quantity,
+               (ot.menu_price * ot.quantity)      AS menuLineTotal,
+               ot.is_canceled
+        FROM orders o
+                 INNER JOIN tables t ON o.table_no = t.table_no
+                 INNER JOIN stores s ON o.store_no = s.store_no
+                 INNER JOIN orders_items ot ON ot.orders_no = o.orders_no
+        WHERE o.orders_no = #{ordersNo}
+    </select>
+
+
+    <select id="getDailyData" resultType="tableOrder.analytics.dto.response.ResponseAnalyticsDto$SalesDto">
+        WITH RECURSIVE dates AS (SELECT
+                       #{from}
+                       AS
+                       d
+                       UNION ALL
+                       SELECT DATE_ADD(d, INTERVAL 1 DAY)
+                       FROM dates
+                       WHERE d &lt; #{to})
+                       SELECT dates.d AS period, COUNT(o.orders_no) AS orderCount, COALESCE (SUM(o.total_price), 0) AS totalPrice, COALESCE (SUM(o.discount_price), 0) AS discountPrice, COALESCE (SUM(o.total_price) - SUM(o.discount_price), 0) AS finalPrice
+                       FROM dates
+                           LEFT JOIN orders o
+                       ON o.store_no = #{storeNo}
+                           AND o.create_dt >= #{from}
+                           AND o.create_dt &lt; DATE_ADD(dates.d, INTERVAL 1 DAY)
+                       GROUP BY dates.d
+                       ORDER BY dates.d ASC
+    </select>
+
+    <select id="getWeeklyData" resultType="tableOrder.analytics.dto.response.ResponseAnalyticsDto$SalesDto">
+        WITH RECURSIVE dates AS (SELECT #{weekStart} AS d
+                                 UNION ALL
+                                 SELECT DATE_ADD(d, INTERVAL 1 DAY)
+                                 FROM dates
+                                 WHERE d &lt; #{weekEnd})
+        SELECT CONCAT(
+                       DATE_SUB(MIN(dates.d), INTERVAL (DAYOFWEEK(MIN(dates.d))-1) DAY),
+                       ' ~ ',
+                       DATE_ADD(DATE_SUB(MIN(dates.d), INTERVAL (DAYOFWEEK(MIN(dates.d))-1) DAY), INTERVAL 6 DAY)
+               )                                                       AS period,
+               COUNT(o.orders_no)                                      AS orderCount,
+               COALESCE(SUM(o.total_price), 0)                         AS totalPrice,
+               COALESCE(SUM(o.discount_price), 0)                      AS discountPrice,
+               COALESCE(SUM(o.total_price) - SUM(o.discount_price), 0) AS finalPrice
+        FROM dates
+                           LEFT JOIN orders o FORCE INDEX (idx_orders_store_create_dt)
+        ON o.store_no = #{storeNo}
+        AND o.create_dt >= dates.d
+        AND o.create_dt &lt; DATE_ADD(dates.d, INTERVAL 1 DAY)
+        GROUP BY YEAR (dates.d), WEEK(dates.d, 0)
+        ORDER BY period DESC
+            LIMIT 12
+    </select>
+
+    <select id="getMonthlyData" resultType="tableOrder.analytics.dto.response.ResponseAnalyticsDto$SalesDto">
+        WITH RECURSIVE months AS (SELECT DATE_FORMAT(
+                       #{startMonth}
+                       ,
+                       '%Y-%m-01'
+                       )
+                       AS
+                       m
+                       UNION ALL
+                       SELECT DATE_ADD(m, INTERVAL 1 MONTH)
+                       FROM months
+                       WHERE m &lt; DATE_FORMAT (#{baseMonth}, '%Y-%m-01'))
+                       SELECT DATE_FORMAT (months.m, '%Y-%m') AS period, COUNT(o.orders_no) AS orderCount, COALESCE (SUM(o.total_price), 0) AS totalPrice, COALESCE (SUM(o.discount_price), 0) AS discountPrice, COALESCE (SUM(o.total_price) - SUM(o.discount_price), 0) AS finalPrice
+                       FROM months
+                           LEFT JOIN orders o FORCE INDEX (idx_orders_store_create_dt)
+                       ON o.store_no = #{storeNo}
+                           AND o.create_dt >= months.m
+                           AND o.create_dt &lt; DATE_ADD(months.m, INTERVAL 1 MONTH)
+                       GROUP BY period
+                       ORDER BY period DESC
+                       LIMIT 12
+    </select>
+</mapper>
