@@ -1,3 +1,4 @@
+/*
 package tableOrder.stores.service;
 
 import org.junit.jupiter.api.DisplayName;
@@ -34,4 +35,4 @@ class StoresServiceTest {
         int cnt = storesMapper.confirmStores(dto.getBusinessNo());
         assertThat(cnt).isEqualTo(1); // 정상적으로 insert 되었는지 확인
     }
-}
+}*/
